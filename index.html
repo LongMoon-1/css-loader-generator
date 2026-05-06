@@ -180,7 +180,7 @@
 
         .spinner-svg {
             display: block;
-            filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.3));
+            overflow: visible;
         }
 
         .spinner-group {
@@ -192,6 +192,11 @@
             fill: none;
             stroke-linecap: round;
             animation: arc-breathe 2.4s ease-in-out infinite;
+        }
+
+        /* 预览区呼吸容器 */
+        #preview-breathe {
+            overflow: visible;
         }
 
         /* 滑块容器 - 防止滚动误触 */
@@ -331,13 +336,6 @@
             border-color: #238636;
         }
 
-        .style-btn.disabled,
-        .direction-btn.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-            cursor: not-allowed;
-        }
-
         .toggle-switch {
             position: relative;
             width: 44px;
@@ -382,19 +380,9 @@
             transform: translateX(20px);
         }
 
-        /* 控制项置灰样式 */
-        .gh-section.disabled {
-            opacity: 0.35;
-            pointer-events: none;
-        }
-
-        .gh-section.disabled .toggle-switch,
-        .gh-section.disabled .style-btn,
-        .gh-section.disabled .direction-btn,
-        .gh-section.disabled .stepper-btn,
-        .gh-section.disabled input[type=range] {
-            pointer-events: none;
-            cursor: not-allowed;
+        /* 隐藏控制项 - 使用!important确保优先级 */
+        .breathe-hidden {
+            display: none !important;
         }
 
         .modal-overlay {
@@ -767,7 +755,7 @@
                         <div class="loader-head"></div>
                     </div>
                 </div>
-                <div id="preview-breathe" style="display:none;" class="flex items-center justify-center">
+                <div id="preview-breathe" style="display:none; overflow:visible;">
                     <svg id="breathe-svg" class="spinner-svg" width="80" height="80" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <g class="spinner-group">
                             <circle class="spinner-circle" cx="24" cy="24" r="18" stroke="#58a6ff" stroke-width="4" />
@@ -840,7 +828,7 @@
                     </div>
                 </div>
 
-                <!-- 速度 (呼吸模式不禁用) -->
+                <!-- 速度 -->
                 <div id="speed-section" class="gh-section space-y-2">
                     <div class="flex justify-between">
                         <span class="gh-label">旋转速度</span>
@@ -876,7 +864,7 @@
                     </div>
                 </div>
 
-                <!-- 尺寸 (呼吸模式不禁用) -->
+                <!-- 尺寸 -->
                 <div id="size-section" class="gh-section space-y-2">
                     <div class="flex justify-between">
                         <span class="gh-label">图形尺寸</span>
@@ -897,7 +885,7 @@
                 <!-- 粗细 -->
                 <div id="width-section" class="gh-section space-y-2">
                     <div class="flex justify-between">
-                        <span class="gh-label">线条粗细</span>
+                        <span class="gh-label" id="width-label">线条粗细</span>
                         <span id="width-value" class="gh-value">5px</span>
                     </div>
                     <div class="param-row">
@@ -907,7 +895,7 @@
                             <button class="stepper-btn" data-action="width" data-delta="1">+</button>
                         </div>
                         <div class="slider-container">
-                            <input type="range" id="width-control" min="2" max="20" step="1" value="5">
+                            <input type="range" id="width-control" min="1" max="20" step="1" value="5">
                         </div>
                     </div>
                 </div>
@@ -1003,7 +991,6 @@
                 <button id="close-preset-modal-btn" class="text-[#8b949e] hover:text-[#f0f6fc] text-xl">&times;</button>
             </div>
             <div class="p-4 space-y-4">
-                <!-- 分区一：常规预设 -->
                 <div>
                     <div class="preset-section-title">常规预设</div>
                     <div class="space-y-2">
@@ -1030,7 +1017,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 分区二：特殊预设 -->
                 <div>
                     <div class="preset-section-title">特殊预设</div>
                     <div class="space-y-2">
@@ -1056,29 +1042,28 @@
 
     <script>
         // DOM 元素
-        const root = document.documentElement;
-        const loader = document.getElementById('loader');
-        const orbit = document.getElementById('orbit');
-        const colorPicker = document.getElementById('color-picker');
-        const glowSection = document.getElementById('glow-section');
-        const previewArea = document.getElementById('preview-area');
-        const previewClassic = document.getElementById('preview-classic');
-        const previewBreathe = document.getElementById('preview-breathe');
-        const breatheSvg = document.getElementById('breathe-svg');
+        var root = document.documentElement;
+        var loader = document.getElementById('loader');
+        var orbit = document.getElementById('orbit');
+        var colorPicker = document.getElementById('color-picker');
+        var glowSection = document.getElementById('glow-section');
+        var previewArea = document.getElementById('preview-area');
+        var previewClassic = document.getElementById('preview-classic');
+        var previewBreathe = document.getElementById('preview-breathe');
+        var breatheSvg = document.getElementById('breathe-svg');
 
-        // 呼吸模式下需要置灰的section（速度、尺寸、颜色、背景色除外）
-        const sectionsToDisableInBreathe = [
-            document.getElementById('style-section'),
-            document.getElementById('orbit-section'),
-            document.getElementById('gradient-section'),
-            document.getElementById('glow-section'),
-            document.getElementById('direction-section'),
-            document.getElementById('length-section'),
-            document.getElementById('width-section')
+        // 呼吸模式下需要隐藏的section
+        var sectionsToHideInBreathe = [
+            'style-section',
+            'orbit-section',
+            'gradient-section',
+            'glow-section',
+            'direction-section',
+            'length-section'
         ];
 
         // 预设配置定义
-        const presets = {
+        var presets = {
             best: {
                 style: 'classic',
                 orbit: true,
@@ -1144,6 +1129,7 @@
                 color: '#58a6ff',
                 size: 80,
                 speed: 2.4,
+                trackWidth: 4,
                 exportBg: '#0d1117',
                 exportBgName: '深色',
                 mode: 'breathe'
@@ -1151,7 +1137,7 @@
         };
 
         // 配置对象 - 默认均衡
-        let config = {
+        var config = {
             style: 'classic',
             orbit: false,
             gradientTail: true,
@@ -1168,28 +1154,35 @@
         };
 
         // 当前是否呼吸模式
-        let isBreatheMode = false;
+        var isBreatheMode = false;
 
-        function setSectionsDisabled(disabled) {
-            sectionsToDisableInBreathe.forEach(section => {
+        function setSectionsVisibility(hidden) {
+            // 使用 ID 字符串数组，直接通过 getElementById 获取
+            sectionsToHideInBreathe.forEach(function(id) {
+                var section = document.getElementById(id);
                 if (!section) return;
-                if (disabled) {
-                    section.classList.add('disabled');
+                if (hidden) {
+                    section.classList.add('breathe-hidden');
                 } else {
-                    section.classList.remove('disabled');
+                    section.classList.remove('breathe-hidden');
                 }
             });
-            // 置灰风格按钮和方向按钮
-            document.getElementById('btn-classic').classList.toggle('disabled', disabled);
-            document.getElementById('btn-minimal').classList.toggle('disabled', disabled);
-            document.getElementById('btn-cw').classList.toggle('disabled', disabled);
-            document.getElementById('btn-ccw').classList.toggle('disabled', disabled);
+
+            // 更新粗细区域的标签
+            var widthLabel = document.getElementById('width-label');
+            if (widthLabel) {
+                widthLabel.textContent = hidden ? '圆环粗细' : '线条粗细';
+            }
+            var widthHint = document.querySelector('#width-section .gh-hint');
+            if (widthHint) {
+                widthHint.textContent = hidden ? 'SVG 描边宽度' : '轨道和圆弧的线条宽度';
+            }
         }
 
         function switchPreviewMode(mode) {
             if (mode === 'breathe') {
                 previewClassic.style.display = 'none';
-                previewBreathe.style.display = 'flex';
+                previewBreathe.style.display = 'block';
                 isBreatheMode = true;
             } else {
                 previewClassic.style.display = 'flex';
@@ -1200,16 +1193,24 @@
 
         function updateBreathePreview() {
             if (!isBreatheMode) return;
-            const size = config.size;
+            var size = config.size;
             breatheSvg.setAttribute('width', size);
             breatheSvg.setAttribute('height', size);
-            const circle = breatheSvg.querySelector('.spinner-circle');
+            var circle = breatheSvg.querySelector('.spinner-circle');
             if (circle) {
                 circle.setAttribute('stroke', config.color);
-                const dropShadow = 'drop-shadow(0 0 8px ' + config.color + '4d)';
-                breatheSvg.style.filter = dropShadow;
+                circle.setAttribute('stroke-width', config.trackWidth);
             }
-            const group = breatheSvg.querySelector('.spinner-group');
+            // 清除旧的 filter，用 inline style 设置，避免 filter 产生方形边界
+            breatheSvg.style.filter = 'none';
+            // 用 box-shadow 的思路行不通，改用 svg 内部 filter
+            // 实际上是 drop-shadow 导致的问题，我们移除 filter 改用 opacity shadow
+            // 不，方形边框是 drop-shadow 在某些浏览器的渲染 bug
+            // 直接在 preview-breathe 上处理
+            previewBreathe.style.filter = 'none';
+            // 球体发光效果用 circle 的 stroke 配合 opacity，这里只用简单的 shadow
+            // 实际上最干净的做法：去掉所有 filter
+            var group = breatheSvg.querySelector('.spinner-group');
             if (group) {
                 group.style.animationDuration = config.speed + 's';
             }
@@ -1247,24 +1248,26 @@
             document.getElementById('width-value').textContent = config.trackWidth + 'px';
             document.getElementById('width-display').textContent = config.trackWidth + 'px';
             root.style.setProperty('--track-width', config.trackWidth + 'px');
+            if (isBreatheMode) updateBreathePreview();
         }
 
         function updateLoaderClass() {
-            const baseClass = config.style === 'classic' ? 'loader-classic' : 'loader-minimal';
-            const gradientClass = config.gradientTail ? '' : 'no-gradient';
-            const glowClass = (config.style === 'classic' && config.glow) ? 'glow' : '';
+            if (isBreatheMode) return;
+            var baseClass = config.style === 'classic' ? 'loader-classic' : 'loader-minimal';
+            var gradientClass = config.gradientTail ? '' : 'no-gradient';
+            var glowClass = (config.style === 'classic' && config.glow) ? 'glow' : '';
             loader.className = 'loader-container ' + baseClass + ' ' + gradientClass + ' ' + glowClass;
             loader.className = loader.className.trim();
         }
 
         function updateOrbitUI() {
-            const toggle = document.getElementById('orbit-toggle');
+            var toggle = document.getElementById('orbit-toggle');
             toggle.classList.toggle('on', config.orbit);
             orbit.classList.toggle('show', config.orbit);
         }
 
         function updateGradientUI() {
-            const toggle = document.getElementById('gradient-toggle');
+            var toggle = document.getElementById('gradient-toggle');
             toggle.classList.toggle('on', config.gradientTail);
             if (config.style === 'classic') {
                 toggle.classList.add('disabled');
@@ -1278,7 +1281,7 @@
         }
 
         function updateGlowUI() {
-            const toggle = document.getElementById('glow-toggle');
+            var toggle = document.getElementById('glow-toggle');
             toggle.classList.toggle('on', config.glow);
         }
 
@@ -1322,9 +1325,10 @@
 
         function refreshAllUI() {
             updateSpeedUI();
+            updateSizeUI();
+            updateWidthUI();
             if (!isBreatheMode) {
                 updateLengthUI();
-                updateWidthUI();
                 updateLoaderClass();
                 updateOrbitUI();
                 updateGradientUI();
@@ -1332,7 +1336,6 @@
                 updateStyleUI();
                 updateDirectionUI();
             }
-            updateSizeUI();
             updateColorUI();
             updateExportBgUI();
         }
@@ -1395,7 +1398,7 @@
         }
 
         function setWidth(value) {
-            var newVal = Math.min(20, Math.max(2, parseInt(value)));
+            var newVal = Math.min(20, Math.max(1, parseInt(value)));
             if (isNaN(newVal)) return;
             config.trackWidth = newVal;
             updateWidthUI();
@@ -1428,15 +1431,17 @@
 
             if (config.mode === 'breathe') {
                 switchPreviewMode('breathe');
-                setSectionsDisabled(true);
+                setSectionsVisibility(true);
                 updateBreathePreview();
                 updateColorUI();
                 updateSizeUI();
                 updateSpeedUI();
+                updateWidthUI();
                 updateExportBgUI();
+                // 确保隐藏样式在呼吸模式下生效
             } else {
                 switchPreviewMode('classic');
-                setSectionsDisabled(false);
+                setSectionsVisibility(false);
                 refreshAllUI();
             }
 
@@ -1446,7 +1451,7 @@
         // ========== 生成HTML ==========
         function generateHTML() {
             if (config.mode === 'breathe') {
-                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            filter: drop-shadow(0 0 8px ' + config.color + '4d);\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: 4;\n            stroke-linecap: round;\n            animation: arc-breathe ' + config.speed + 's ease-in-out infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
+                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            overflow: visible;\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: ' + config.trackWidth + ';\n            stroke-linecap: round;\n            animation: arc-breathe ' + config.speed + 's ease-in-out infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
             }
 
             var isClassic = config.style === 'classic';
