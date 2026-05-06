@@ -156,6 +156,44 @@
             );
         }
 
+        /* 呼吸圆环动画 */
+        @keyframes smart-rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(360deg);
+            }
+            100% {
+                transform: rotate(1080deg);
+            }
+        }
+
+        @keyframes arc-breathe {
+            0%, 100% {
+                stroke-dasharray: 16.965, 113.1;
+            }
+            50% {
+                stroke-dasharray: 96.14, 113.1;
+            }
+        }
+
+        .spinner-svg {
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.3));
+        }
+
+        .spinner-group {
+            animation: smart-rotate 2.4s linear infinite;
+            transform-origin: center;
+        }
+
+        .spinner-circle {
+            fill: none;
+            stroke-linecap: round;
+            animation: arc-breathe 2.4s ease-in-out infinite;
+        }
+
         /* 滑块容器 - 防止滚动误触 */
         .slider-container {
             touch-action: pan-y pinch-zoom;
@@ -293,6 +331,13 @@
             border-color: #238636;
         }
 
+        .style-btn.disabled,
+        .direction-btn.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
         .toggle-switch {
             position: relative;
             width: 44px;
@@ -335,6 +380,21 @@
 
         .toggle-switch.on::after {
             transform: translateX(20px);
+        }
+
+        /* 控制项置灰样式 */
+        .gh-section.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .gh-section.disabled .toggle-switch,
+        .gh-section.disabled .style-btn,
+        .gh-section.disabled .direction-btn,
+        .gh-section.disabled .stepper-btn,
+        .gh-section.disabled input[type=range] {
+            pointer-events: none;
+            cursor: not-allowed;
         }
 
         .modal-overlay {
@@ -502,6 +562,16 @@
             transform: scale(0.96);
         }
 
+        .preset-section-title {
+            color: #8b949e;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 4px;
+            margin-bottom: 2px;
+        }
+
         .gh-btn {
             background: #238636;
             color: #fff;
@@ -590,6 +660,32 @@
             min-height: 180px;
         }
 
+        /* 滚动提示箭头 */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            animation: bounce-down 1.8s ease-in-out infinite;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            opacity: 0;
+        }
+
+        .scroll-indicator.show {
+            opacity: 1;
+        }
+
+        @keyframes bounce-down {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(8px);
+            }
+        }
+
         /* 手机端优化 */
         @media (max-width: 640px) {
             .stepper-btn {
@@ -627,212 +723,251 @@
             flex: 1;
             min-width: 120px;
         }
+
+        /* PC端左右分栏 */
+        @media (min-width: 1024px) {
+            .main-layout {
+                display: flex;
+                gap: 24px;
+                align-items: flex-start;
+                max-width: 1000px;
+                width: 100%;
+            }
+            .preview-panel {
+                flex: 1;
+                position: sticky;
+                top: 20px;
+            }
+            .config-panel {
+                flex: 1;
+                max-width: 420px;
+            }
+            #preview-area {
+                min-height: 320px;
+            }
+        }
     </style>
 </head>
 <body class="w-full flex flex-col items-center py-6 px-3 sm:py-10 sm:px-4">
 
-    <div class="flex flex-col items-center gap-5 sm:gap-6 p-4 sm:p-6 bg-[#161b22] border border-[#30363d] rounded-xl w-full max-w-md">
+    <div class="main-layout">
 
-        <div class="text-center space-y-1">
-            <h1 class="text-base font-semibold text-[#f0f6fc]">加载动画生成器</h1>
-            <p class="text-xs text-[#8b949e]">配置参数 · 导出代码</p>
-        </div>
+        <!-- 左侧：预览面板 (PC端sticky) -->
+        <div class="preview-panel w-full max-w-md mx-auto flex flex-col items-center gap-4">
+            <div class="text-center space-y-1">
+                <h1 class="text-base font-semibold text-[#f0f6fc]">加载动画生成器</h1>
+                <p class="text-xs text-[#8b949e]">配置参数 · 导出代码</p>
+            </div>
 
-        <!-- 动画预览 -->
-        <div id="preview-area" class="relative flex items-center justify-center p-8 rounded-lg border border-[#30363d] w-full" style="background-color: #0d1117;">
-            <div class="loader-wrapper">
-                <div id="orbit" class="orbit-ring"></div>
-                <div id="loader" class="loader-container loader-classic">
-                    <div class="loader-ring"></div>
-                    <div class="loader-head"></div>
+            <div id="preview-area" class="relative flex items-center justify-center p-8 rounded-lg border border-[#30363d] w-full" style="background-color: #0d1117;">
+                <div id="preview-classic" class="loader-wrapper">
+                    <div id="orbit" class="orbit-ring"></div>
+                    <div id="loader" class="loader-container loader-classic">
+                        <div class="loader-ring"></div>
+                        <div class="loader-head"></div>
+                    </div>
+                </div>
+                <div id="preview-breathe" style="display:none;" class="flex items-center justify-center">
+                    <svg id="breathe-svg" class="spinner-svg" width="80" height="80" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <g class="spinner-group">
+                            <circle class="spinner-circle" cx="24" cy="24" r="18" stroke="#58a6ff" stroke-width="4" />
+                        </g>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <!-- 控制面板 -->
-        <div class="w-full space-y-4">
+        <!-- 右侧：控制面板 -->
+        <div class="config-panel w-full max-w-md mx-auto">
+            <div class="flex flex-col gap-5 sm:gap-6 p-4 sm:p-6 bg-[#161b22] border border-[#30363d] rounded-xl w-full">
 
-            <!-- 预设配置按钮 -->
-            <div>
-                <button id="preset-btn" class="w-full gh-btn-outline flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                    预设配置
+                <!-- 预设配置按钮 -->
+                <div>
+                    <button id="preset-btn" class="w-full gh-btn-outline flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        预设配置
+                    </button>
+                </div>
+
+                <!-- 风格选择 -->
+                <div id="style-section" class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">动画风格</span>
+                        <span id="style-value" class="gh-value">经典</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-classic" class="style-btn active flex-1">经典</button>
+                        <button id="btn-minimal" class="style-btn flex-1">简约</button>
+                    </div>
+                </div>
+
+                <!-- 轨道开关 -->
+                <div id="orbit-section" class="gh-section flex items-center justify-between">
+                    <div class="space-y-0.5">
+                        <span class="gh-label">显示轨道</span>
+                        <p class="gh-hint">半透明底环，随尺寸粗细变化</p>
+                    </div>
+                    <div id="orbit-toggle" class="toggle-switch"></div>
+                </div>
+
+                <!-- 渐变拖尾开关 -->
+                <div id="gradient-section" class="gh-section flex items-center justify-between">
+                    <div class="space-y-0.5">
+                        <span class="gh-label">渐变拖尾</span>
+                        <p class="gh-hint">关闭时尾部无渐变淡出</p>
+                    </div>
+                    <div id="gradient-toggle" class="toggle-switch on"></div>
+                </div>
+
+                <!-- 发光开关 -->
+                <div id="glow-section" class="gh-section flex items-center justify-between">
+                    <div class="space-y-0.5">
+                        <span class="gh-label">头部发光</span>
+                        <p class="gh-hint">经典模式头部圆点光晕</p>
+                    </div>
+                    <div id="glow-toggle" class="toggle-switch"></div>
+                </div>
+
+                <!-- 方向 -->
+                <div id="direction-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">旋转方向</span>
+                        <span id="direction-value" class="gh-value">逆时针</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-cw" class="direction-btn flex-1">↻ 顺时针</button>
+                        <button id="btn-ccw" class="direction-btn active flex-1">↺ 逆时针</button>
+                    </div>
+                </div>
+
+                <!-- 速度 (呼吸模式不禁用) -->
+                <div id="speed-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">旋转速度</span>
+                        <span id="speed-value" class="gh-value">1.4s</span>
+                    </div>
+                    <div class="param-row">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="speed" data-delta="-0.1">−</button>
+                            <span id="speed-display" class="stepper-value">1.4s</span>
+                            <button class="stepper-btn" data-action="speed" data-delta="0.1">+</button>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="speed-control" min="0.1" max="3.0" step="0.1" value="1.4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 长度 -->
+                <div id="length-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">圆弧长度</span>
+                        <span id="length-value" class="gh-value">180°</span>
+                    </div>
+                    <div class="param-row">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="length" data-delta="-10">−</button>
+                            <span id="length-display" class="stepper-value">180°</span>
+                            <button class="stepper-btn" data-action="length" data-delta="10">+</button>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="length-control" min="30" max="350" step="10" value="180">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 尺寸 (呼吸模式不禁用) -->
+                <div id="size-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">图形尺寸</span>
+                        <span id="size-value" class="gh-value">40px</span>
+                    </div>
+                    <div class="param-row">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="size" data-delta="-10">−</button>
+                            <span id="size-display" class="stepper-value">40px</span>
+                            <button class="stepper-btn" data-action="size" data-delta="10">+</button>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="size-control" min="20" max="200" step="10" value="40">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 粗细 -->
+                <div id="width-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">线条粗细</span>
+                        <span id="width-value" class="gh-value">5px</span>
+                    </div>
+                    <div class="param-row">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="width" data-delta="-1">−</button>
+                            <span id="width-display" class="stepper-value">5px</span>
+                            <button class="stepper-btn" data-action="width" data-delta="1">+</button>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="width-control" min="2" max="20" step="1" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 颜色 -->
+                <div id="color-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">颜色</span>
+                        <span id="color-value" class="gh-value">#c9d1d9</span>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <div class="flex gap-2 flex-1 flex-wrap">
+                            <button data-color="#58a6ff" class="w-8 h-8 rounded-full bg-[#58a6ff] hover:scale-110 transition color-preset"></button>
+                            <button data-color="#f85149" class="w-8 h-8 rounded-full bg-[#f85149] hover:scale-110 transition color-preset"></button>
+                            <button data-color="#3fb950" class="w-8 h-8 rounded-full bg-[#3fb950] hover:scale-110 transition color-preset"></button>
+                            <button data-color="#d29922" class="w-8 h-8 rounded-full bg-[#d29922] hover:scale-110 transition color-preset"></button>
+                            <button data-color="#a371f7" class="w-8 h-8 rounded-full bg-[#a371f7] hover:scale-110 transition color-preset"></button>
+                            <button data-color="#f0f6fc" class="w-8 h-8 rounded-full bg-[#f0f6fc] hover:scale-110 transition color-preset"></button>
+                        </div>
+                        <div class="relative">
+                            <input type="color" id="color-picker" value="#c9d1d9">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导出背景颜色 -->
+                <div id="bg-section" class="gh-section space-y-2">
+                    <div class="flex justify-between">
+                        <span class="gh-label">导出背景色</span>
+                        <span id="bg-color-value" class="gh-value">深色 (#0d1117)</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap" id="bg-presets">
+                        <div data-bg="#0d1117" data-name="深色" class="bg-preview" style="background: #0d1117;"></div>
+                        <div data-bg="#ffffff" data-name="白色" class="bg-preview" style="background: #ffffff;"></div>
+                        <div data-bg="#f6f8fa" data-name="浅灰" class="bg-preview" style="background: #f6f8fa;"></div>
+                        <div data-bg="#1a1b26" data-name="Tokyo Night" class="bg-preview" style="background: #1a1b26;"></div>
+                        <div data-bg="#282c35" data-name="深灰" class="bg-preview" style="background: #282c35;"></div>
+                        <div data-bg="#fdf6e3" data-name="Solarized" class="bg-preview" style="background: #fdf6e3;"></div>
+                        <div data-bg="#2b2b2b" data-name="暗黑" class="bg-preview" style="background: #2b2b2b;"></div>
+                        <div data-bg="#1e1e2f" data-name="暮色" class="bg-preview" style="background: #1e1e2f;"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="gh-hint">自定义</span>
+                        <input type="color" id="bg-color-picker" value="#0d1117">
+                        <span id="custom-bg-name" class="gh-value text-xs">#0d1117</span>
+                    </div>
+                </div>
+
+                <!-- 生成按钮 -->
+                <button id="generate-btn" class="w-full gh-btn">
+                    生成 HTML 代码
                 </button>
-            </div>
 
-            <!-- 风格选择 -->
-            <div class="space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">动画风格</span>
-                    <span id="style-value" class="gh-value">经典</span>
-                </div>
-                <div class="flex gap-2">
-                    <button id="btn-classic" class="style-btn active flex-1">经典</button>
-                    <button id="btn-minimal" class="style-btn flex-1">简约</button>
-                </div>
             </div>
-
-            <!-- 轨道开关 -->
-            <div class="gh-section flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="gh-label">显示轨道</span>
-                    <p class="gh-hint">半透明底环，随尺寸粗细变化</p>
-                </div>
-                <div id="orbit-toggle" class="toggle-switch"></div>
-            </div>
-
-            <!-- 渐变拖尾开关 -->
-            <div class="gh-section flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="gh-label">渐变拖尾</span>
-                    <p class="gh-hint">关闭时尾部无渐变淡出</p>
-                </div>
-                <div id="gradient-toggle" class="toggle-switch on"></div>
-            </div>
-
-            <!-- 发光开关 -->
-            <div id="glow-section" class="gh-section flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="gh-label">头部发光</span>
-                    <p class="gh-hint">经典模式头部圆点光晕</p>
-                </div>
-                <div id="glow-toggle" class="toggle-switch"></div>
-            </div>
-
-            <!-- 方向 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">旋转方向</span>
-                    <span id="direction-value" class="gh-value">逆时针</span>
-                </div>
-                <div class="flex gap-2">
-                    <button id="btn-cw" class="direction-btn flex-1">↻ 顺时针</button>
-                    <button id="btn-ccw" class="direction-btn active flex-1">↺ 逆时针</button>
-                </div>
-            </div>
-
-            <!-- 速度 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">旋转速度</span>
-                    <span id="speed-value" class="gh-value">1.4s</span>
-                </div>
-                <div class="param-row">
-                    <div class="stepper-control">
-                        <button class="stepper-btn" data-action="speed" data-delta="-0.1">−</button>
-                        <span id="speed-display" class="stepper-value">1.4s</span>
-                        <button class="stepper-btn" data-action="speed" data-delta="0.1">+</button>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="speed-control" min="0.1" max="3.0" step="0.1" value="1.4">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 长度 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">圆弧长度</span>
-                    <span id="length-value" class="gh-value">180°</span>
-                </div>
-                <div class="param-row">
-                    <div class="stepper-control">
-                        <button class="stepper-btn" data-action="length" data-delta="-10">−</button>
-                        <span id="length-display" class="stepper-value">180°</span>
-                        <button class="stepper-btn" data-action="length" data-delta="10">+</button>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="length-control" min="30" max="350" step="10" value="180">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 尺寸 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">图形尺寸</span>
-                    <span id="size-value" class="gh-value">40px</span>
-                </div>
-                <div class="param-row">
-                    <div class="stepper-control">
-                        <button class="stepper-btn" data-action="size" data-delta="-10">−</button>
-                        <span id="size-display" class="stepper-value">40px</span>
-                        <button class="stepper-btn" data-action="size" data-delta="10">+</button>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="size-control" min="40" max="200" step="10" value="40">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 粗细 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">线条粗细</span>
-                    <span id="width-value" class="gh-value">5px</span>
-                </div>
-                <div class="param-row">
-                    <div class="stepper-control">
-                        <button class="stepper-btn" data-action="width" data-delta="-1">−</button>
-                        <span id="width-display" class="stepper-value">5px</span>
-                        <button class="stepper-btn" data-action="width" data-delta="1">+</button>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="width-control" min="2" max="20" step="1" value="5">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 颜色 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">颜色</span>
-                    <span id="color-value" class="gh-value">#c9d1d9</span>
-                </div>
-                <div class="flex items-center gap-3 flex-wrap">
-                    <div class="flex gap-2 flex-1 flex-wrap">
-                        <button data-color="#58a6ff" class="w-8 h-8 rounded-full bg-[#58a6ff] hover:scale-110 transition color-preset"></button>
-                        <button data-color="#f85149" class="w-8 h-8 rounded-full bg-[#f85149] hover:scale-110 transition color-preset"></button>
-                        <button data-color="#3fb950" class="w-8 h-8 rounded-full bg-[#3fb950] hover:scale-110 transition color-preset"></button>
-                        <button data-color="#d29922" class="w-8 h-8 rounded-full bg-[#d29922] hover:scale-110 transition color-preset"></button>
-                        <button data-color="#a371f7" class="w-8 h-8 rounded-full bg-[#a371f7] hover:scale-110 transition color-preset"></button>
-                        <button data-color="#f0f6fc" class="w-8 h-8 rounded-full bg-[#f0f6fc] hover:scale-110 transition color-preset"></button>
-                    </div>
-                    <div class="relative">
-                        <input type="color" id="color-picker" value="#c9d1d9">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 导出背景颜色 -->
-            <div class="gh-section space-y-2">
-                <div class="flex justify-between">
-                    <span class="gh-label">导出背景色</span>
-                    <span id="bg-color-value" class="gh-value">深色 (#0d1117)</span>
-                </div>
-                <div class="flex gap-2 flex-wrap" id="bg-presets">
-                    <div data-bg="#0d1117" data-name="深色" class="bg-preview" style="background: #0d1117;"></div>
-                    <div data-bg="#ffffff" data-name="白色" class="bg-preview" style="background: #ffffff;"></div>
-                    <div data-bg="#f6f8fa" data-name="浅灰" class="bg-preview" style="background: #f6f8fa;"></div>
-                    <div data-bg="#1a1b26" data-name="Tokyo Night" class="bg-preview" style="background: #1a1b26;"></div>
-                    <div data-bg="#282c35" data-name="深灰" class="bg-preview" style="background: #282c35;"></div>
-                    <div data-bg="#fdf6e3" data-name="Solarized" class="bg-preview" style="background: #fdf6e3;"></div>
-                    <div data-bg="#2b2b2b" data-name="暗黑" class="bg-preview" style="background: #2b2b2b;"></div>
-                    <div data-bg="#1e1e2f" data-name="暮色" class="bg-preview" style="background: #1e1e2f;"></div>
-                </div>
-                <div class="flex items-center gap-3 mt-2">
-                    <span class="gh-hint">自定义</span>
-                    <input type="color" id="bg-color-picker" value="#0d1117">
-                    <span id="custom-bg-name" class="gh-value text-xs">#0d1117</span>
-                </div>
-            </div>
-
         </div>
+    </div>
 
-        <!-- 生成按钮 -->
-        <button id="generate-btn" class="w-full gh-btn">
-            生成 HTML 代码
-        </button>
+    <!-- 滚动提示箭头 -->
+    <div id="scroll-indicator" class="scroll-indicator">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </div>
 
     <!-- 代码模态框 -->
@@ -846,11 +981,9 @@
                 <button id="close-modal-btn" class="text-[#8b949e] hover:text-[#f0f6fc] text-xl">&times;</button>
             </div>
             <div class="p-4 space-y-4">
-                <!-- 代码面板 -->
                 <div id="tab-code-panel" class="tab-panel active">
                     <div class="code-area" id="code-output"></div>
                 </div>
-                <!-- 预览面板 -->
                 <div id="tab-preview-panel" class="tab-panel">
                     <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts"></iframe>
                 </div>
@@ -869,38 +1002,53 @@
                 <h3 class="text-[#f0f6fc] font-semibold text-sm">预设配置</h3>
                 <button id="close-preset-modal-btn" class="text-[#8b949e] hover:text-[#f0f6fc] text-xl">&times;</button>
             </div>
-            <div class="p-4 space-y-3">
-                <!-- 预设1: 效果最佳 -->
-                <div class="preset-item">
-                    <div>
-                        <div class="text-[#f0f6fc] text-sm font-medium">效果最佳</div>
-                        <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 轨道发光全开 · 80px</div>
+            <div class="p-4 space-y-4">
+                <!-- 分区一：常规预设 -->
+                <div>
+                    <div class="preset-section-title">常规预设</div>
+                    <div class="space-y-2">
+                        <div class="preset-item">
+                            <div>
+                                <div class="text-[#f0f6fc] text-sm font-medium">效果最佳</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 轨道发光全开 · 80px</div>
+                            </div>
+                            <button class="preset-load-btn" data-preset="best">加载</button>
+                        </div>
+                        <div class="preset-item">
+                            <div>
+                                <div class="text-[#f0f6fc] text-sm font-medium">均衡</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 极简配置 · 40px</div>
+                            </div>
+                            <button class="preset-load-btn" data-preset="balanced">加载</button>
+                        </div>
+                        <div class="preset-item">
+                            <div>
+                                <div class="text-[#f0f6fc] text-sm font-medium">代码最短</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">简约 · 顺时针 · 最小体积 · 36px</div>
+                            </div>
+                            <button class="preset-load-btn" data-preset="minimal">加载</button>
+                        </div>
                     </div>
-                    <button class="preset-load-btn" data-preset="best">加载</button>
                 </div>
-                <!-- 预设2: 均衡 -->
-                <div class="preset-item">
-                    <div>
-                        <div class="text-[#f0f6fc] text-sm font-medium">均衡</div>
-                        <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 极简配置 · 40px</div>
+                <!-- 分区二：特殊预设 -->
+                <div>
+                    <div class="preset-section-title">特殊预设</div>
+                    <div class="space-y-2">
+                        <div class="preset-item">
+                            <div>
+                                <div class="text-[#f0f6fc] text-sm font-medium">经典圆环</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">简约 · 逆时针 · 轨道 · 短弧 · 50px</div>
+                            </div>
+                            <button class="preset-load-btn" data-preset="ring">加载</button>
+                        </div>
+                        <div class="preset-item">
+                            <div>
+                                <div class="text-[#f0f6fc] text-sm font-medium">呼吸圆环</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">SVG · 弧长呼吸 · 智能旋转 · 无缝循环</div>
+                            </div>
+                            <button class="preset-load-btn" data-preset="breathe">加载</button>
+                        </div>
                     </div>
-                    <button class="preset-load-btn" data-preset="balanced">加载</button>
-                </div>
-                <!-- 预设3: 经典圆环 -->
-                <div class="preset-item">
-                    <div>
-                        <div class="text-[#f0f6fc] text-sm font-medium">经典圆环</div>
-                        <div class="text-[#8b949e] text-xs mt-0.5">简约 · 逆时针 · 轨道 · 短弧 · 50px</div>
-                    </div>
-                    <button class="preset-load-btn" data-preset="ring">加载</button>
-                </div>
-                <!-- 预设4: 代码最短 -->
-                <div class="preset-item">
-                    <div>
-                        <div class="text-[#f0f6fc] text-sm font-medium">代码最短</div>
-                        <div class="text-[#8b949e] text-xs mt-0.5">简约 · 顺时针 · 最小体积 · 36px</div>
-                    </div>
-                    <button class="preset-load-btn" data-preset="minimal">加载</button>
                 </div>
             </div>
         </div>
@@ -914,6 +1062,20 @@
         const colorPicker = document.getElementById('color-picker');
         const glowSection = document.getElementById('glow-section');
         const previewArea = document.getElementById('preview-area');
+        const previewClassic = document.getElementById('preview-classic');
+        const previewBreathe = document.getElementById('preview-breathe');
+        const breatheSvg = document.getElementById('breathe-svg');
+
+        // 呼吸模式下需要置灰的section（速度、尺寸、颜色、背景色除外）
+        const sectionsToDisableInBreathe = [
+            document.getElementById('style-section'),
+            document.getElementById('orbit-section'),
+            document.getElementById('gradient-section'),
+            document.getElementById('glow-section'),
+            document.getElementById('direction-section'),
+            document.getElementById('length-section'),
+            document.getElementById('width-section')
+        ];
 
         // 预设配置定义
         const presets = {
@@ -929,7 +1091,8 @@
                 trackWidth: 6,
                 color: '#58a6ff',
                 exportBg: '#0d1117',
-                exportBgName: '深色'
+                exportBgName: '深色',
+                mode: 'configurable'
             },
             balanced: {
                 style: 'classic',
@@ -943,21 +1106,8 @@
                 trackWidth: 5,
                 color: '#c9d1d9',
                 exportBg: '#0d1117',
-                exportBgName: '深色'
-            },
-            ring: {
-                style: 'minimal',
-                orbit: true,
-                gradientTail: false,
-                glow: false,
-                direction: -1,
-                speed: 1.4,
-                tailLength: 90,
-                size: 50,
-                trackWidth: 3,
-                color: '#c9d1d9',
-                exportBg: '#0d1117',
-                exportBgName: '深色'
+                exportBgName: '深色',
+                mode: 'configurable'
             },
             minimal: {
                 style: 'minimal',
@@ -971,7 +1121,32 @@
                 trackWidth: 2,
                 color: '#8b949e',
                 exportBg: '#0d1117',
-                exportBgName: '深色'
+                exportBgName: '深色',
+                mode: 'configurable'
+            },
+            ring: {
+                style: 'minimal',
+                orbit: true,
+                gradientTail: false,
+                glow: false,
+                direction: -1,
+                speed: 1.4,
+                tailLength: 90,
+                size: 50,
+                trackWidth: 3,
+                color: '#c9d1d9',
+                exportBg: '#0d1117',
+                exportBgName: '深色',
+                mode: 'configurable'
+            },
+            breathe: {
+                style: 'breathe',
+                color: '#58a6ff',
+                size: 80,
+                speed: 2.4,
+                exportBg: '#0d1117',
+                exportBgName: '深色',
+                mode: 'breathe'
             }
         };
 
@@ -988,43 +1163,98 @@
             trackWidth: 5,
             color: '#c9d1d9',
             exportBg: '#0d1117',
-            exportBgName: '深色'
+            exportBgName: '深色',
+            mode: 'configurable'
         };
+
+        // 当前是否呼吸模式
+        let isBreatheMode = false;
+
+        function setSectionsDisabled(disabled) {
+            sectionsToDisableInBreathe.forEach(section => {
+                if (!section) return;
+                if (disabled) {
+                    section.classList.add('disabled');
+                } else {
+                    section.classList.remove('disabled');
+                }
+            });
+            // 置灰风格按钮和方向按钮
+            document.getElementById('btn-classic').classList.toggle('disabled', disabled);
+            document.getElementById('btn-minimal').classList.toggle('disabled', disabled);
+            document.getElementById('btn-cw').classList.toggle('disabled', disabled);
+            document.getElementById('btn-ccw').classList.toggle('disabled', disabled);
+        }
+
+        function switchPreviewMode(mode) {
+            if (mode === 'breathe') {
+                previewClassic.style.display = 'none';
+                previewBreathe.style.display = 'flex';
+                isBreatheMode = true;
+            } else {
+                previewClassic.style.display = 'flex';
+                previewBreathe.style.display = 'none';
+                isBreatheMode = false;
+            }
+        }
+
+        function updateBreathePreview() {
+            if (!isBreatheMode) return;
+            const size = config.size;
+            breatheSvg.setAttribute('width', size);
+            breatheSvg.setAttribute('height', size);
+            const circle = breatheSvg.querySelector('.spinner-circle');
+            if (circle) {
+                circle.setAttribute('stroke', config.color);
+                const dropShadow = 'drop-shadow(0 0 8px ' + config.color + '4d)';
+                breatheSvg.style.filter = dropShadow;
+            }
+            const group = breatheSvg.querySelector('.spinner-group');
+            if (group) {
+                group.style.animationDuration = config.speed + 's';
+            }
+            if (circle) {
+                circle.style.animationDuration = config.speed + 's';
+            }
+        }
 
         // ========== 更新UI函数 ==========
         function updateSpeedUI() {
             document.getElementById('speed-control').value = config.speed;
-            document.getElementById('speed-value').textContent = `${config.speed.toFixed(1)}s`;
-            document.getElementById('speed-display').textContent = `${config.speed.toFixed(1)}s`;
-            root.style.setProperty('--speed', `${config.speed}s`);
+            document.getElementById('speed-value').textContent = config.speed.toFixed(1) + 's';
+            document.getElementById('speed-display').textContent = config.speed.toFixed(1) + 's';
+            root.style.setProperty('--speed', config.speed + 's');
+            if (isBreatheMode) updateBreathePreview();
         }
 
         function updateLengthUI() {
             document.getElementById('length-control').value = config.tailLength;
-            document.getElementById('length-value').textContent = `${config.tailLength}°`;
-            document.getElementById('length-display').textContent = `${config.tailLength}°`;
-            root.style.setProperty('--tail-length', `${config.tailLength}deg`);
+            document.getElementById('length-value').textContent = config.tailLength + '°';
+            document.getElementById('length-display').textContent = config.tailLength + '°';
+            root.style.setProperty('--tail-length', config.tailLength + 'deg');
         }
 
         function updateSizeUI() {
             document.getElementById('size-control').value = config.size;
-            document.getElementById('size-value').textContent = `${config.size}px`;
-            document.getElementById('size-display').textContent = `${config.size}px`;
-            root.style.setProperty('--loader-size', `${config.size}px`);
+            document.getElementById('size-value').textContent = config.size + 'px';
+            document.getElementById('size-display').textContent = config.size + 'px';
+            root.style.setProperty('--loader-size', config.size + 'px');
+            if (isBreatheMode) updateBreathePreview();
         }
 
         function updateWidthUI() {
             document.getElementById('width-control').value = config.trackWidth;
-            document.getElementById('width-value').textContent = `${config.trackWidth}px`;
-            document.getElementById('width-display').textContent = `${config.trackWidth}px`;
-            root.style.setProperty('--track-width', `${config.trackWidth}px`);
+            document.getElementById('width-value').textContent = config.trackWidth + 'px';
+            document.getElementById('width-display').textContent = config.trackWidth + 'px';
+            root.style.setProperty('--track-width', config.trackWidth + 'px');
         }
 
         function updateLoaderClass() {
             const baseClass = config.style === 'classic' ? 'loader-classic' : 'loader-minimal';
             const gradientClass = config.gradientTail ? '' : 'no-gradient';
             const glowClass = (config.style === 'classic' && config.glow) ? 'glow' : '';
-            loader.className = `loader-container ${baseClass} ${gradientClass} ${glowClass}`.trim();
+            loader.className = 'loader-container ' + baseClass + ' ' + gradientClass + ' ' + glowClass;
+            loader.className = loader.className.trim();
         }
 
         function updateOrbitUI() {
@@ -1036,8 +1266,6 @@
         function updateGradientUI() {
             const toggle = document.getElementById('gradient-toggle');
             toggle.classList.toggle('on', config.gradientTail);
-
-            // 经典模式下置灰渐变拖尾开关，强制为开
             if (config.style === 'classic') {
                 toggle.classList.add('disabled');
                 toggle.classList.add('on');
@@ -1057,8 +1285,9 @@
         function updateStyleUI() {
             document.getElementById('btn-classic').classList.toggle('active', config.style === 'classic');
             document.getElementById('btn-minimal').classList.toggle('active', config.style === 'minimal');
-            document.getElementById('style-value').textContent = config.style === 'classic' ? '经典' : '简约';
-            glowSection.style.display = config.style === 'minimal' ? 'none' : 'flex';
+            var styleText = config.style === 'classic' ? '经典' : (config.style === 'minimal' ? '简约' : '呼吸');
+            document.getElementById('style-value').textContent = styleText;
+            glowSection.style.display = (config.style === 'minimal' || config.style === 'breathe') ? 'none' : 'flex';
             updateGradientUI();
             updateLoaderClass();
         }
@@ -1074,15 +1303,16 @@
             root.style.setProperty('--accent-color', config.color);
             colorPicker.value = config.color;
             document.getElementById('color-value').textContent = config.color;
+            if (isBreatheMode) updateBreathePreview();
         }
 
         function updateExportBgUI() {
             previewArea.style.backgroundColor = config.exportBg;
-            document.getElementById('bg-color-value').textContent = `${config.exportBgName} (${config.exportBg})`;
+            document.getElementById('bg-color-value').textContent = config.exportBgName + ' (' + config.exportBg + ')';
             document.getElementById('custom-bg-name').textContent = config.exportBg;
             document.getElementById('bg-color-picker').value = config.exportBg;
 
-            document.querySelectorAll('#bg-presets .bg-preview').forEach(el => {
+            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(el) {
                 el.style.borderColor = '#30363d';
                 if (el.getAttribute('data-bg') === config.exportBg) {
                     el.style.borderColor = '#58a6ff';
@@ -1092,15 +1322,17 @@
 
         function refreshAllUI() {
             updateSpeedUI();
-            updateLengthUI();
+            if (!isBreatheMode) {
+                updateLengthUI();
+                updateWidthUI();
+                updateLoaderClass();
+                updateOrbitUI();
+                updateGradientUI();
+                updateGlowUI();
+                updateStyleUI();
+                updateDirectionUI();
+            }
             updateSizeUI();
-            updateWidthUI();
-            updateLoaderClass();
-            updateOrbitUI();
-            updateGradientUI();
-            updateGlowUI();
-            updateStyleUI();
-            updateDirectionUI();
             updateColorUI();
             updateExportBgUI();
         }
@@ -1142,28 +1374,28 @@
         }
 
         function setSpeed(value) {
-            let newVal = Math.min(3.0, Math.max(0.1, parseFloat(value)));
+            var newVal = Math.min(3.0, Math.max(0.1, parseFloat(value)));
             if (isNaN(newVal)) return;
             config.speed = newVal;
             updateSpeedUI();
         }
 
         function setLength(value) {
-            let newVal = Math.min(350, Math.max(30, parseInt(value)));
+            var newVal = Math.min(350, Math.max(30, parseInt(value)));
             if (isNaN(newVal)) return;
             config.tailLength = newVal;
             updateLengthUI();
         }
 
         function setSize(value) {
-            let newVal = Math.min(200, Math.max(40, parseInt(value)));
+            var newVal = Math.min(200, Math.max(20, parseInt(value)));
             if (isNaN(newVal)) return;
             config.size = newVal;
             updateSizeUI();
         }
 
         function setWidth(value) {
-            let newVal = Math.min(20, Math.max(2, parseInt(value)));
+            var newVal = Math.min(20, Math.max(2, parseInt(value)));
             if (isNaN(newVal)) return;
             config.trackWidth = newVal;
             updateWidthUI();
@@ -1190,125 +1422,68 @@
         }
 
         function loadPreset(presetName) {
-            const preset = presets[presetName];
+            var preset = presets[presetName];
             if (!preset) return;
             Object.assign(config, preset);
-            refreshAllUI();
+
+            if (config.mode === 'breathe') {
+                switchPreviewMode('breathe');
+                setSectionsDisabled(true);
+                updateBreathePreview();
+                updateColorUI();
+                updateSizeUI();
+                updateSpeedUI();
+                updateExportBgUI();
+            } else {
+                switchPreviewMode('classic');
+                setSectionsDisabled(false);
+                refreshAllUI();
+            }
+
             closePresetModal();
         }
 
         // ========== 生成HTML ==========
         function generateHTML() {
-            const isClassic = config.style === 'classic';
-            const solidEnd = config.gradientTail
+            if (config.mode === 'breathe') {
+                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            filter: drop-shadow(0 0 8px ' + config.color + '4d);\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: 4;\n            stroke-linecap: round;\n            animation: arc-breathe ' + config.speed + 's ease-in-out infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
+            }
+
+            var isClassic = config.style === 'classic';
+            var solidEnd = config.gradientTail
                 ? (isClassic ? config.tailLength * 0.2 : config.tailLength * 0.15)
                 : config.tailLength;
 
-            let css = '';
+            var css = '';
 
             if (config.orbit) {
-                css += `
-        .orbit {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: ${config.trackWidth}px solid ${config.color}18;
-        }`;
+                css += '\n        .orbit {\n            position: absolute;\n            inset: 0;\n            border-radius: 50%;\n            border: ' + config.trackWidth + 'px solid ' + config.color + '18;\n        }';
             }
 
-            css += `
-        .loader {
-            width: ${config.size}px;
-            height: ${config.size}px;
-            position: relative;
-            animation: spin ${config.speed}s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(${config.direction * 360}deg); }
-        }
-        .loader-ring {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                ${config.color} 0deg,
-                ${config.color} ${solidEnd}deg,
-                transparent ${config.tailLength}deg,
-                transparent 360deg
-            );
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - ${config.trackWidth}px), #fff calc(100% - ${config.trackWidth}px + 1px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - ${config.trackWidth}px), #fff calc(100% - ${config.trackWidth}px + 1px));
-        }`;
+            css += '\n        .loader {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            position: relative;\n            animation: spin ' + config.speed + 's linear infinite;\n        }\n        @keyframes spin {\n            0% { transform: rotate(0deg); }\n            100% { transform: rotate(' + (config.direction * 360) + 'deg); }\n        }\n        .loader-ring {\n            width: 100%;\n            height: 100%;\n            border-radius: 50%;\n            background: conic-gradient(\n                from 0deg,\n                ' + config.color + ' 0deg,\n                ' + config.color + ' ' + solidEnd + 'deg,\n                transparent ' + config.tailLength + 'deg,\n                transparent 360deg\n            );\n            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - ' + config.trackWidth + 'px), #fff calc(100% - ' + config.trackWidth + 'px + 1px));\n            mask: radial-gradient(farthest-side, transparent calc(100% - ' + config.trackWidth + 'px), #fff calc(100% - ' + config.trackWidth + 'px + 1px));\n        }';
 
-            let html = '';
+            var html = '';
 
             if (config.orbit) {
-                html += `
-    <div class="orbit"></div>`;
+                html += '\n    <div class="orbit"></div>';
             }
 
-            html += `
-    <div class="loader">
-        <div class="loader-ring"></div>`;
+            html += '\n    <div class="loader">\n        <div class="loader-ring"></div>';
 
             if (isClassic) {
-                const glowCSS = config.glow ? `box-shadow: 0 0 10px ${config.color}, 0 0 20px ${config.color};` : '';
-                css += `
-        .loader::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: ${config.trackWidth}px;
-            height: ${config.trackWidth}px;
-            background: ${config.color};
-            border-radius: 50%;
-            ${glowCSS}
-        }`;
+                var glowCSS = config.glow ? 'box-shadow: 0 0 10px ' + config.color + ', 0 0 20px ' + config.color + ';' : '';
+                css += '\n        .loader::before {\n            content: \'\';\n            position: absolute;\n            top: 0;\n            left: 50%;\n            transform: translateX(-50%);\n            width: ' + config.trackWidth + 'px;\n            height: ' + config.trackWidth + 'px;\n            background: ' + config.color + ';\n            border-radius: 50%;\n            ' + glowCSS + '\n        }';
             }
 
-            html += `
-    </div>`;
+            html += '\n    </div>';
 
-            const wrapperCSS = config.orbit ? `
-        .wrapper {
-            position: relative;
-            width: ${config.size}px;
-            height: ${config.size}px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }` : '';
+            var wrapperCSS = config.orbit ? '\n        .wrapper {\n            position: relative;\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n        }' : '';
 
-            return `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Animation</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: ${config.exportBg};
-        }${wrapperCSS}${css}
-    </style>
-</head>
-<body>
-    <div class="wrapper">${html}
-    </div>
-</body>
-</html>`;
+            return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n        }' + wrapperCSS + css + '\n    </style>\n</head>\n<body>\n    <div class="wrapper">' + html + '\n    </div>\n</body>\n</html>';
         }
 
         // ========== 模态框 ==========
-        let activeTab = 'code';
+        var activeTab = 'code';
 
         function switchTab(tab) {
             activeTab = tab;
@@ -1318,7 +1493,7 @@
             document.getElementById('tab-preview-panel').classList.toggle('active', tab === 'preview');
 
             if (tab === 'preview') {
-                const frame = document.getElementById('preview-frame');
+                var frame = document.getElementById('preview-frame');
                 frame.srcdoc = generateHTML();
             }
         }
@@ -1334,16 +1509,16 @@
         }
 
         async function copyCode() {
-            const code = document.getElementById('code-output').textContent;
-            const btn = document.getElementById('copy-btn');
-            const originalHTML = btn.innerHTML;
+            var code = document.getElementById('code-output').textContent;
+            var btn = document.getElementById('copy-btn');
+            var originalHTML = btn.innerHTML;
 
             try {
                 await navigator.clipboard.writeText(code);
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制';
-                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+                setTimeout(function() { btn.innerHTML = originalHTML; }, 2000);
             } catch (err) {
-                const textarea = document.createElement('textarea');
+                var textarea = document.createElement('textarea');
                 textarea.value = code;
                 textarea.style.position = 'fixed';
                 textarea.style.opacity = '0';
@@ -1352,7 +1527,7 @@
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制';
-                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+                setTimeout(function() { btn.innerHTML = originalHTML; }, 2000);
             }
         }
 
@@ -1364,82 +1539,102 @@
             document.getElementById('preset-modal').classList.remove('open');
         }
 
+        // ========== 滚动指示器 ==========
+        function updateScrollIndicator() {
+            var indicator = document.getElementById('scroll-indicator');
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var scrollHeight = document.documentElement.scrollHeight;
+            var clientHeight = document.documentElement.clientHeight;
+            var isScrollable = scrollHeight > clientHeight + 10;
+            var atBottom = scrollTop + clientHeight >= scrollHeight - 20;
+
+            if (isScrollable && !atBottom) {
+                indicator.classList.add('show');
+            } else {
+                indicator.classList.remove('show');
+            }
+        }
+
         // ========== 滑块防误触 ==========
         function initSliders() {
-            document.querySelectorAll('.slider-container').forEach(container => {
-                const slider = container.querySelector('input[type=range]');
+            document.querySelectorAll('.slider-container').forEach(function(container) {
+                var slider = container.querySelector('input[type=range]');
                 if (!slider) return;
 
-                slider.addEventListener('touchstart', () => container.classList.add('active'), { passive: false });
-                slider.addEventListener('touchend', () => container.classList.remove('active'));
-                slider.addEventListener('mousedown', () => container.classList.add('active'));
-                window.addEventListener('mouseup', () => container.classList.remove('active'));
+                slider.addEventListener('touchstart', function() { container.classList.add('active'); }, { passive: false });
+                slider.addEventListener('touchend', function() { container.classList.remove('active'); });
+                slider.addEventListener('mousedown', function() { container.classList.add('active'); });
+                window.addEventListener('mouseup', function() { container.classList.remove('active'); });
             });
         }
 
         // ========== 事件绑定 ==========
         function bindEvents() {
-            document.getElementById('btn-classic').onclick = () => setStyle('classic');
-            document.getElementById('btn-minimal').onclick = () => setStyle('minimal');
+            document.getElementById('btn-classic').onclick = function() { setStyle('classic'); };
+            document.getElementById('btn-minimal').onclick = function() { setStyle('minimal'); };
             document.getElementById('orbit-toggle').onclick = toggleOrbit;
             document.getElementById('gradient-toggle').onclick = toggleGradient;
             document.getElementById('glow-toggle').onclick = toggleGlow;
-            document.getElementById('btn-cw').onclick = () => setDirection(1);
-            document.getElementById('btn-ccw').onclick = () => setDirection(-1);
+            document.getElementById('btn-cw').onclick = function() { setDirection(1); };
+            document.getElementById('btn-ccw').onclick = function() { setDirection(-1); };
 
-            document.getElementById('speed-control').oninput = (e) => setSpeed(e.target.value);
-            document.getElementById('length-control').oninput = (e) => setLength(e.target.value);
-            document.getElementById('size-control').oninput = (e) => setSize(e.target.value);
-            document.getElementById('width-control').oninput = (e) => setWidth(e.target.value);
+            document.getElementById('speed-control').oninput = function(e) { setSpeed(e.target.value); };
+            document.getElementById('length-control').oninput = function(e) { setLength(e.target.value); };
+            document.getElementById('size-control').oninput = function(e) { setSize(e.target.value); };
+            document.getElementById('width-control').oninput = function(e) { setWidth(e.target.value); };
 
-            document.querySelectorAll('.stepper-btn').forEach(btn => {
-                btn.onclick = (e) => {
+            document.querySelectorAll('.stepper-btn').forEach(function(btn) {
+                btn.onclick = function(e) {
                     e.stopPropagation();
-                    const action = btn.getAttribute('data-action');
-                    const delta = parseFloat(btn.getAttribute('data-delta'));
+                    var action = btn.getAttribute('data-action');
+                    var delta = parseFloat(btn.getAttribute('data-delta'));
                     if (action && !isNaN(delta)) handleStepper(action, delta);
                 };
             });
 
-            document.querySelectorAll('.color-preset').forEach(btn => {
-                btn.onclick = () => setColor(btn.getAttribute('data-color'));
+            document.querySelectorAll('.color-preset').forEach(function(btn) {
+                btn.onclick = function() { setColor(btn.getAttribute('data-color')); };
             });
-            colorPicker.oninput = (e) => setColor(e.target.value);
+            colorPicker.oninput = function(e) { setColor(e.target.value); };
 
-            document.querySelectorAll('#bg-presets .bg-preview').forEach(btn => {
-                btn.onclick = () => {
-                    const bg = btn.getAttribute('data-bg');
-                    const name = btn.getAttribute('data-name');
+            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(btn) {
+                btn.onclick = function() {
+                    var bg = btn.getAttribute('data-bg');
+                    var name = btn.getAttribute('data-name');
                     if (bg && name) setExportBg(bg, name);
                 };
             });
-            document.getElementById('bg-color-picker').oninput = (e) => setExportBg(e.target.value, '自定义');
+            document.getElementById('bg-color-picker').oninput = function(e) { setExportBg(e.target.value, '自定义'); };
 
             document.getElementById('generate-btn').onclick = openModal;
             document.getElementById('close-modal-btn').onclick = closeModal;
-            document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
+            document.getElementById('modal').onclick = function(e) { if (e.target.id === 'modal') closeModal(); };
             document.getElementById('copy-btn').onclick = copyCode;
-            document.getElementById('tab-code-btn').onclick = () => switchTab('code');
-            document.getElementById('tab-preview-btn').onclick = () => switchTab('preview');
+            document.getElementById('tab-code-btn').onclick = function() { switchTab('code'); };
+            document.getElementById('tab-preview-btn').onclick = function() { switchTab('preview'); };
 
             document.getElementById('preset-btn').onclick = openPresetModal;
             document.getElementById('close-preset-modal-btn').onclick = closePresetModal;
-            document.getElementById('preset-modal').onclick = (e) => {
+            document.getElementById('preset-modal').onclick = function(e) {
                 if (e.target.id === 'preset-modal') closePresetModal();
             };
 
-            document.querySelectorAll('.preset-load-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const presetName = btn.getAttribute('data-preset');
+            document.querySelectorAll('.preset-load-btn').forEach(function(btn) {
+                btn.onclick = function() {
+                    var presetName = btn.getAttribute('data-preset');
                     if (presetName) loadPreset(presetName);
                 };
             });
+
+            window.addEventListener('scroll', updateScrollIndicator);
+            window.addEventListener('resize', updateScrollIndicator);
         }
 
         function init() {
             bindEvents();
             initSliders();
             refreshAllUI();
+            updateScrollIndicator();
         }
 
         init();
