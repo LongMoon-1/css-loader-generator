@@ -156,7 +156,7 @@
             );
         }
 
-        /* 呼吸圆环动画 */
+        /* 呼吸圆环动画 - 线性版 */
         @keyframes smart-rotate {
             0% {
                 transform: rotate(0deg);
@@ -169,7 +169,7 @@
             }
         }
 
-        @keyframes arc-breathe {
+        @keyframes arc-linear-breathe {
             0%, 100% {
                 stroke-dasharray: 16.965, 113.1;
             }
@@ -191,10 +191,9 @@
         .spinner-circle {
             fill: none;
             stroke-linecap: round;
-            animation: arc-breathe 2.4s ease-in-out infinite;
+            animation: arc-linear-breathe 2.4s linear infinite;
         }
 
-        /* 预览区呼吸容器 */
         #preview-breathe {
             overflow: visible;
         }
@@ -380,7 +379,7 @@
             transform: translateX(20px);
         }
 
-        /* 隐藏控制项 - 使用!important确保优先级 */
+        /* 隐藏控制项 */
         .breathe-hidden {
             display: none !important;
         }
@@ -474,6 +473,59 @@
             border: 1px solid #30363d;
             border-radius: 8px;
             background: #fff;
+        }
+
+        /* 使用说明样式 */
+        .guide-area {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-size: 12px;
+            line-height: 1.7;
+            padding: 16px;
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 50vh;
+            border: 1px solid #30363d;
+        }
+
+        .guide-area h4 {
+            color: #58a6ff;
+            font-size: 13px;
+            margin: 14px 0 6px;
+            font-weight: 600;
+        }
+
+        .guide-area h4:first-child {
+            margin-top: 0;
+        }
+
+        .guide-area code {
+            background: #21262d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
+            font-size: 11px;
+            color: #f0f6fc;
+        }
+
+        .guide-area pre {
+            background: #161b22;
+            padding: 10px 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 6px 0;
+            font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
+            font-size: 11px;
+            border: 1px solid #21262d;
+        }
+
+        .guide-area ul {
+            padding-left: 18px;
+            margin: 4px 0;
+        }
+
+        .guide-area li {
+            margin: 3px 0;
         }
 
         /* 预设面板样式 */
@@ -965,6 +1017,7 @@
                 <div class="flex gap-1">
                     <button id="tab-code-btn" class="tab-btn active">代码</button>
                     <button id="tab-preview-btn" class="tab-btn">预览</button>
+                    <button id="tab-guide-btn" class="tab-btn">使用说明</button>
                 </div>
                 <button id="close-modal-btn" class="text-[#8b949e] hover:text-[#f0f6fc] text-xl">&times;</button>
             </div>
@@ -974,6 +1027,9 @@
                 </div>
                 <div id="tab-preview-panel" class="tab-panel">
                     <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts"></iframe>
+                </div>
+                <div id="tab-guide-panel" class="tab-panel">
+                    <div class="guide-area" id="guide-output"></div>
                 </div>
                 <button id="copy-btn" class="w-full gh-btn flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -1030,7 +1086,7 @@
                         <div class="preset-item">
                             <div>
                                 <div class="text-[#f0f6fc] text-sm font-medium">呼吸圆环</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">SVG · 弧长呼吸 · 智能旋转 · 无缝循环</div>
+                                <div class="text-[#8b949e] text-xs mt-0.5">SVG · 弧长呼吸 · 线性流畅 · 无缝循环</div>
                             </div>
                             <button class="preset-load-btn" data-preset="breathe">加载</button>
                         </div>
@@ -1052,7 +1108,7 @@
         var previewBreathe = document.getElementById('preview-breathe');
         var breatheSvg = document.getElementById('breathe-svg');
 
-        // 呼吸模式下需要隐藏的section
+        // 呼吸模式下需要隐藏的section ID
         var sectionsToHideInBreathe = [
             'style-section',
             'orbit-section',
@@ -1157,7 +1213,6 @@
         var isBreatheMode = false;
 
         function setSectionsVisibility(hidden) {
-            // 使用 ID 字符串数组，直接通过 getElementById 获取
             sectionsToHideInBreathe.forEach(function(id) {
                 var section = document.getElementById(id);
                 if (!section) return;
@@ -1168,7 +1223,6 @@
                 }
             });
 
-            // 更新粗细区域的标签
             var widthLabel = document.getElementById('width-label');
             if (widthLabel) {
                 widthLabel.textContent = hidden ? '圆环粗细' : '线条粗细';
@@ -1201,15 +1255,8 @@
                 circle.setAttribute('stroke', config.color);
                 circle.setAttribute('stroke-width', config.trackWidth);
             }
-            // 清除旧的 filter，用 inline style 设置，避免 filter 产生方形边界
             breatheSvg.style.filter = 'none';
-            // 用 box-shadow 的思路行不通，改用 svg 内部 filter
-            // 实际上是 drop-shadow 导致的问题，我们移除 filter 改用 opacity shadow
-            // 不，方形边框是 drop-shadow 在某些浏览器的渲染 bug
-            // 直接在 preview-breathe 上处理
             previewBreathe.style.filter = 'none';
-            // 球体发光效果用 circle 的 stroke 配合 opacity，这里只用简单的 shadow
-            // 实际上最干净的做法：去掉所有 filter
             var group = breatheSvg.querySelector('.spinner-group');
             if (group) {
                 group.style.animationDuration = config.speed + 's';
@@ -1438,7 +1485,6 @@
                 updateSpeedUI();
                 updateWidthUI();
                 updateExportBgUI();
-                // 确保隐藏样式在呼吸模式下生效
             } else {
                 switchPreviewMode('classic');
                 setSectionsVisibility(false);
@@ -1448,10 +1494,77 @@
             closePresetModal();
         }
 
+        // ========== 生成使用说明 ==========
+        function generateGuide() {
+            var isBreathe = config.mode === 'breathe';
+            var html = '';
+
+            if (isBreathe) {
+                html = '<h4>如何使用这段呼吸圆环代码</h4>\n';
+                html += '<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>，你可以通过以下方式使用：</p>\n\n';
+
+                html += '<h4>方式一：直接使用（推荐新手）</h4>\n';
+                html += '<p>复制全部代码，保存为 <code>loading.html</code>，在需要展示加载动画时打开或嵌入。</p>\n\n';
+
+                html += '<h4>方式二：整合到现有项目</h4>\n';
+                html += '<p>将 <code>&lt;style&gt;</code> 部分复制到你的 CSS 文件中，将 <code>&lt;svg&gt;</code> 部分复制到 HTML 中需要显示加载动画的位置。</p>\n';
+                html += '<p><strong>核心代码（SVG + CSS）：</strong></p>\n';
+                html += '<pre>&lt;svg class="spinner-svg" viewBox="0 0 48 48"&gt;\n  &lt;g class="spinner-group"&gt;\n    &lt;circle class="spinner-circle"\n      cx="24" cy="24" r="18" /&gt;\n  &lt;/g&gt;\n&lt;/svg&gt;</pre>\n\n';
+
+                html += '<h4>方式三：React / Vue 中使用</h4>\n';
+                html += '<p>将 CSS 动画定义放入全局样式或组件样式中，SVG 部分直接作为 JSX / template 使用：</p>\n';
+                html += '<pre>// React 示例\nfunction LoadingSpinner() {\n  return (\n    &lt;svg className="spinner-svg"\n      viewBox="0 0 48 48"&gt;\n      &lt;g className="spinner-group"&gt;\n        &lt;circle className="spinner-circle"\n          cx="24" cy="24" r="18" /&gt;\n      &lt;/g&gt;\n    &lt;/svg&gt;\n  );\n}</pre>\n\n';
+
+                html += '<h4>可调整的参数</h4>\n';
+                html += '<ul>\n';
+                html += '<li><strong>尺寸</strong>：修改 <code>.spinner-svg</code> 的 <code>width</code> / <code>height</code></li>\n';
+                html += '<li><strong>颜色</strong>：修改 <code>.spinner-circle</code> 的 <code>stroke</code> 属性</li>\n';
+                html += '<li><strong>粗细</strong>：修改 <code>stroke-width</code> 属性</li>\n';
+                html += '<li><strong>速度</strong>：修改 <code>animation</code> 中的 <code>' + config.speed + 's</code></li>\n';
+                html += '<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n';
+                html += '</ul>\n';
+            } else {
+                html = '<h4>如何使用这段加载动画代码</h4>\n';
+                html += '<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>，你可以通过以下方式使用：</p>\n\n';
+
+                html += '<h4>方式一：直接使用（推荐新手）</h4>\n';
+                html += '<p>复制全部代码，保存为 <code>loading.html</code>，在需要展示加载动画时打开或嵌入到 <code>&lt;iframe&gt;</code> 中。</p>\n\n';
+
+                html += '<h4>方式二：整合到现有项目</h4>\n';
+                html += '<p>将 <code>&lt;style&gt;</code> 标签内的 CSS 复制到你的样式文件中，将 <code>&lt;body&gt;</code> 内的 HTML 放到需要显示加载动画的位置。</p>\n';
+                html += '<p><strong>核心 HTML 结构：</strong></p>\n';
+                html += '<pre>&lt;div class="wrapper"&gt;\n  &lt;div class="loader"&gt;\n    &lt;div class="loader-ring"&gt;&lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;</pre>\n';
+                html += '<p>如果开启了轨道选项，额外加上 <code>&lt;div class="orbit"&gt;&lt;/div&gt;</code>。</p>\n\n';
+
+                html += '<h4>方式三：React / Vue 中使用</h4>\n';
+                html += '<p>将 CSS 动画定义放入全局样式，HTML 结构作为组件：</p>\n';
+                html += '<pre>// React 示例\nfunction LoadingSpinner() {\n  return (\n    &lt;div className="wrapper"&gt;\n      &lt;div className="loader"&gt;\n        &lt;div className="loader-ring" /&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  );\n}</pre>\n\n';
+
+                html += '<h4>可调整的参数</h4>\n';
+                html += '<ul>\n';
+                html += '<li><strong>尺寸</strong>：修改 <code>.loader</code> 的 <code>width</code> / <code>height</code></li>\n';
+                html += '<li><strong>颜色</strong>：修改 <code>conic-gradient</code> 中的颜色值</li>\n';
+                html += '<li><strong>粗细</strong>：修改 <code>mask</code> 中的 <code>calc(100% - Xpx)</code></li>\n';
+                html += '<li><strong>速度</strong>：修改 <code>animation</code> 中的时长</li>\n';
+                html += '<li><strong>弧长</strong>：修改 <code>conic-gradient</code> 中的角度值</li>\n';
+                html += '<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n';
+                html += '</ul>\n';
+            }
+
+            html += '\n<h4>常见问题</h4>\n';
+            html += '<ul>\n';
+            html += '<li><strong>动画不显示？</strong> 检查 CSS 是否正确引入，<code>@keyframes</code> 是否被复制。</li>\n';
+            html += '<li><strong>尺寸不对？</strong> 确保容器没有额外的宽高限制。</li>\n';
+            html += '<li><strong>颜色不生效？</strong> 经典/简约模式颜色在 CSS 中硬编码，需手动替换 <code>conic-gradient</code> 中的色值。</li>\n';
+            html += '</ul>\n';
+
+            return html;
+        }
+
         // ========== 生成HTML ==========
         function generateHTML() {
             if (config.mode === 'breathe') {
-                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            overflow: visible;\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: ' + config.trackWidth + ';\n            stroke-linecap: round;\n            animation: arc-breathe ' + config.speed + 's ease-in-out infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
+                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            overflow: visible;\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: ' + config.trackWidth + ';\n            stroke-linecap: round;\n            animation: arc-linear-breathe ' + config.speed + 's linear infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-linear-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
             }
 
             var isClassic = config.style === 'classic';
@@ -1494,12 +1607,26 @@
             activeTab = tab;
             document.getElementById('tab-code-btn').classList.toggle('active', tab === 'code');
             document.getElementById('tab-preview-btn').classList.toggle('active', tab === 'preview');
+            document.getElementById('tab-guide-btn').classList.toggle('active', tab === 'guide');
             document.getElementById('tab-code-panel').classList.toggle('active', tab === 'code');
             document.getElementById('tab-preview-panel').classList.toggle('active', tab === 'preview');
+            document.getElementById('tab-guide-panel').classList.toggle('active', tab === 'guide');
 
             if (tab === 'preview') {
                 var frame = document.getElementById('preview-frame');
                 frame.srcdoc = generateHTML();
+            }
+
+            if (tab === 'guide') {
+                document.getElementById('guide-output').innerHTML = generateGuide();
+            }
+
+            // 根据标签页控制复制按钮的显示
+            var copyBtn = document.getElementById('copy-btn');
+            if (tab === 'guide') {
+                copyBtn.style.display = 'none';
+            } else {
+                copyBtn.style.display = 'flex';
             }
         }
 
@@ -1617,6 +1744,7 @@
             document.getElementById('copy-btn').onclick = copyCode;
             document.getElementById('tab-code-btn').onclick = function() { switchTab('code'); };
             document.getElementById('tab-preview-btn').onclick = function() { switchTab('preview'); };
+            document.getElementById('tab-guide-btn').onclick = function() { switchTab('guide'); };
 
             document.getElementById('preset-btn').onclick = openPresetModal;
             document.getElementById('close-preset-modal-btn').onclick = closePresetModal;
