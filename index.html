@@ -29,12 +29,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(calc(360deg * var(--rotation-direction)));
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(calc(360deg * var(--rotation-direction))); }
         }
 
         .loader-wrapper {
@@ -56,9 +52,7 @@
             pointer-events: none;
         }
 
-        .orbit-ring.show {
-            opacity: 1;
-        }
+        .orbit-ring.show { opacity: 1; }
 
         .loader-container {
             position: relative;
@@ -67,41 +61,19 @@
             will-change: transform;
         }
 
-        .loader-classic {
-            animation: spin var(--speed) linear infinite;
-        }
+        .loader-classic { animation: spin var(--speed) linear infinite; }
 
         .loader-classic .loader-ring {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                var(--accent-color) 0deg,
-                var(--accent-color) calc(var(--tail-length) * 0.2),
-                transparent var(--tail-length),
-                transparent 360deg
-            );
-            -webkit-mask: radial-gradient(
-                farthest-side,
-                transparent calc(100% - var(--track-width)),
-                #fff calc(100% - var(--track-width) + 1px)
-            );
-            mask: radial-gradient(
-                farthest-side,
-                transparent calc(100% - var(--track-width)),
-                #fff calc(100% - var(--track-width) + 1px)
-            );
+            background: conic-gradient(from 0deg, var(--accent-color) 0deg, var(--accent-color) calc(var(--tail-length) * 0.2), transparent var(--tail-length), transparent 360deg);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--track-width)), #fff calc(100% - var(--track-width) + 1px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - var(--track-width)), #fff calc(100% - var(--track-width) + 1px));
         }
 
         .loader-classic.no-gradient .loader-ring {
-            background: conic-gradient(
-                from 0deg,
-                var(--accent-color) 0deg,
-                var(--accent-color) var(--tail-length),
-                transparent var(--tail-length),
-                transparent 360deg
-            );
+            background: conic-gradient(from 0deg, var(--accent-color) 0deg, var(--accent-color) var(--tail-length), transparent var(--tail-length), transparent 360deg);
         }
 
         .loader-classic .loader-head {
@@ -119,95 +91,39 @@
             box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
         }
 
-        .loader-minimal {
-            animation: spin var(--speed) linear infinite;
-        }
+        .loader-minimal { animation: spin var(--speed) linear infinite; }
 
         .loader-minimal .loader-ring {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                var(--accent-color) 0deg,
-                var(--accent-color) calc(var(--tail-length) * 0.15),
-                transparent var(--tail-length),
-                transparent 360deg
-            );
-            -webkit-mask: radial-gradient(
-                farthest-side,
-                transparent calc(100% - var(--track-width)),
-                #fff calc(100% - var(--track-width) + 1px)
-            );
-            mask: radial-gradient(
-                farthest-side,
-                transparent calc(100% - var(--track-width)),
-                #fff calc(100% - var(--track-width) + 1px)
-            );
+            background: conic-gradient(from 0deg, var(--accent-color) 0deg, var(--accent-color) calc(var(--tail-length) * 0.15), transparent var(--tail-length), transparent 360deg);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--track-width)), #fff calc(100% - var(--track-width) + 1px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - var(--track-width)), #fff calc(100% - var(--track-width) + 1px));
         }
 
         .loader-minimal.no-gradient .loader-ring {
-            background: conic-gradient(
-                from 0deg,
-                var(--accent-color) 0deg,
-                var(--accent-color) var(--tail-length),
-                transparent var(--tail-length),
-                transparent 360deg
-            );
+            background: conic-gradient(from 0deg, var(--accent-color) 0deg, var(--accent-color) var(--tail-length), transparent var(--tail-length), transparent 360deg);
         }
 
-        /* 呼吸圆环动画 - 线性版 */
         @keyframes smart-rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            50% {
-                transform: rotate(360deg);
-            }
-            100% {
-                transform: rotate(1080deg);
-            }
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+            100% { transform: rotate(1080deg); }
         }
 
         @keyframes arc-linear-breathe {
-            0%, 100% {
-                stroke-dasharray: 16.965, 113.1;
-            }
-            50% {
-                stroke-dasharray: 96.14, 113.1;
-            }
+            0%, 100% { stroke-dasharray: var(--breathe-min-arc), 113.1; }
+            50% { stroke-dasharray: var(--breathe-max-arc), 113.1; }
         }
 
-        .spinner-svg {
-            display: block;
-            overflow: visible;
-        }
+        .spinner-svg { display: block; overflow: visible; }
+        .spinner-group { animation: smart-rotate 2.4s linear infinite; transform-origin: center; }
+        .spinner-circle { fill: none; stroke-linecap: round; animation: arc-linear-breathe 2.4s linear infinite; }
+        #preview-breathe { overflow: visible; }
 
-        .spinner-group {
-            animation: smart-rotate 2.4s linear infinite;
-            transform-origin: center;
-        }
-
-        .spinner-circle {
-            fill: none;
-            stroke-linecap: round;
-            animation: arc-linear-breathe 2.4s linear infinite;
-        }
-
-        #preview-breathe {
-            overflow: visible;
-        }
-
-        /* 滑块容器 - 防止滚动误触 */
-        .slider-container {
-            touch-action: pan-y pinch-zoom;
-            position: relative;
-            flex: 1;
-        }
-
-        .slider-container.active {
-            touch-action: none;
-        }
+        .slider-container { touch-action: pan-y pinch-zoom; position: relative; flex: 1; }
+        .slider-container.active { touch-action: none; }
 
         input[type=range] {
             -webkit-appearance: none;
@@ -227,9 +143,7 @@
             transition: transform 0.1s;
         }
 
-        input[type=range]::-webkit-slider-thumb:active {
-            transform: scale(1.3);
-        }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); }
 
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
@@ -239,552 +153,167 @@
             border-radius: 2px;
         }
 
-        /* 数值调整按钮组 */
-        .stepper-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #21262d;
-            border-radius: 8px;
-            padding: 2px;
-        }
-
+        .stepper-control { display: flex; align-items: center; gap: 8px; background: #21262d; border-radius: 8px; padding: 2px; }
         .stepper-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: #30363d;
-            border: none;
-            color: #c9d1d9;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
+            width: 32px; height: 32px; border-radius: 6px; background: #30363d; border: none;
+            color: #c9d1d9; font-size: 18px; font-weight: 600; cursor: pointer;
+            transition: all 0.1s; display: flex; align-items: center; justify-content: center; touch-action: manipulation;
         }
-
-        .stepper-btn:active {
-            transform: scale(0.92);
-            background: #484f58;
-        }
-
-        .stepper-value {
-            min-width: 55px;
-            text-align: center;
-            font-family: 'SFMono-Regular', monospace;
-            font-size: 13px;
-            color: #58a6ff;
-            font-weight: 500;
-        }
+        .stepper-btn:active { transform: scale(0.92); background: #484f58; }
+        .stepper-value { min-width: 55px; text-align: center; font-family: 'SFMono-Regular', monospace; font-size: 13px; color: #58a6ff; font-weight: 500; }
 
         input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            padding: 0;
-            overflow: hidden;
-            touch-action: manipulation;
+            -webkit-appearance: none; border: none; width: 32px; height: 32px;
+            border-radius: 50%; cursor: pointer; padding: 0; overflow: hidden; touch-action: manipulation;
         }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; border: 2px solid #484f58; }
 
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
+        .style-btn, .direction-btn {
+            transition: all 0.2s ease; border: 1px solid #30363d; background: #21262d;
+            color: #8b949e; font-size: 12px; font-weight: 500; cursor: pointer;
+            touch-action: manipulation; padding: 8px 12px; border-radius: 8px;
         }
-
-        input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 50%;
-            border: 2px solid #484f58;
-        }
-
-        .style-btn,
-        .direction-btn {
-            transition: all 0.2s ease;
-            border: 1px solid #30363d;
-            background: #21262d;
-            color: #8b949e;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            touch-action: manipulation;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-
-        .style-btn:active,
-        .direction-btn:active {
-            transform: scale(0.97);
-        }
-
-        .style-btn:hover,
-        .direction-btn:hover {
-            border-color: #8b949e;
-            background: #30363d;
-            color: #c9d1d9;
-        }
-
-        .style-btn.active,
-        .direction-btn.active {
-            background-color: #238636;
-            color: #fff;
-            border-color: #238636;
-        }
+        .style-btn:active, .direction-btn:active { transform: scale(0.97); }
+        .style-btn:hover, .direction-btn:hover { border-color: #8b949e; background: #30363d; color: #c9d1d9; }
+        .style-btn.active, .direction-btn.active { background-color: #238636; color: #fff; border-color: #238636; }
 
         .toggle-switch {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            background: #30363d;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            touch-action: manipulation;
+            position: relative; width: 44px; height: 24px; background: #30363d;
+            border-radius: 12px; cursor: pointer; transition: background 0.2s; touch-action: manipulation;
         }
-
-        .toggle-switch.on {
-            background: #238636;
-        }
-
-        .toggle-switch.disabled {
-            background: #1a1f24;
-            cursor: not-allowed;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .toggle-switch.on.disabled {
-            background: #1a3a26;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
+        .toggle-switch.on { background: #238636; }
+        .toggle-switch.disabled { background: #1a1f24; cursor: not-allowed; opacity: 0.5; pointer-events: none; }
+        .toggle-switch.on.disabled { background: #1a3a26; opacity: 0.6; pointer-events: none; }
         .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: #c9d1d9;
-            border-radius: 50%;
-            transition: transform 0.2s;
+            content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+            background: #c9d1d9; border-radius: 50%; transition: transform 0.2s;
         }
+        .toggle-switch.on::after { transform: translateX(20px); }
 
-        .toggle-switch.on::after {
-            transform: translateX(20px);
-        }
-
-        /* 隐藏控制项 */
-        .breathe-hidden {
-            display: none !important;
-        }
+        .breathe-hidden { display: none !important; }
+        .breathe-only { display: none; }
+        .breathe-only.visible { display: block; }
 
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(13, 17, 23, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; inset: 0; background: rgba(13,17,23,0.9); display: flex;
+            align-items: center; justify-content: center; z-index: 50; opacity: 0;
+            pointer-events: none; transition: opacity 0.3s;
         }
-
-        .modal-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-content {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.95);
-            transition: transform 0.3s;
+            background: #161b22; border: 1px solid #30363d; border-radius: 16px;
+            width: 90%; max-width: 700px; max-height: 80vh; display: flex;
+            flex-direction: column; transform: scale(0.95); transition: transform 0.3s;
         }
-
-        .modal-overlay.open .modal-content {
-            transform: scale(1);
-        }
+        .modal-overlay.open .modal-content { transform: scale(1); }
 
         .code-area {
-            background: #0d1117;
-            color: #c9d1d9;
-            font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
-            font-size: 12px;
-            line-height: 1.6;
-            padding: 16px;
-            border-radius: 8px;
-            overflow: auto;
-            white-space: pre;
-            max-height: 50vh;
-            border: 1px solid #30363d;
+            background: #0d1117; color: #c9d1d9; font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
+            font-size: 12px; line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow: auto; white-space: pre; max-height: 50vh; border: 1px solid #30363d;
         }
 
-        /* 标签页样式 */
         .tab-btn {
-            padding: 8px 16px;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            border: 1px solid transparent;
-            background: transparent;
-            color: #8b949e;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s;
-            touch-action: manipulation;
+            padding: 8px 16px; border-radius: 8px 8px 0 0; cursor: pointer; border: 1px solid transparent;
+            background: transparent; color: #8b949e; font-size: 13px; font-weight: 500; transition: all 0.2s; touch-action: manipulation;
         }
+        .tab-btn:hover { color: #c9d1d9; background: #21262d; }
+        .tab-btn.active { color: #58a6ff; background: #0d1117; border-color: #30363d; border-bottom-color: #0d1117; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .preview-frame { width: 100%; height: 50vh; border: 1px solid #30363d; border-radius: 8px; background: #fff; }
 
-        .tab-btn:hover {
-            color: #c9d1d9;
-            background: #21262d;
-        }
-
-        .tab-btn.active {
-            color: #58a6ff;
-            background: #0d1117;
-            border-color: #30363d;
-            border-bottom-color: #0d1117;
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        .preview-frame {
-            width: 100%;
-            height: 50vh;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        /* 使用说明样式 */
         .guide-area {
-            background: #0d1117;
-            color: #c9d1d9;
-            font-size: 12px;
-            line-height: 1.7;
-            padding: 16px;
-            border-radius: 8px;
-            overflow: auto;
-            max-height: 50vh;
-            border: 1px solid #30363d;
+            background: #0d1117; color: #c9d1d9; font-size: 12px; line-height: 1.7;
+            padding: 16px; border-radius: 8px; overflow: auto; max-height: 50vh; border: 1px solid #30363d;
         }
+        .guide-area h4 { color: #58a6ff; font-size: 13px; margin: 14px 0 6px; font-weight: 600; }
+        .guide-area h4:first-child { margin-top: 0; }
+        .guide-area code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace; font-size: 11px; color: #f0f6fc; }
+        .guide-area pre { background: #161b22; padding: 10px 14px; border-radius: 6px; overflow-x: auto; margin: 6px 0; font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace; font-size: 11px; border: 1px solid #21262d; }
+        .guide-area ul { padding-left: 18px; margin: 4px 0; }
+        .guide-area li { margin: 3px 0; }
 
-        .guide-area h4 {
-            color: #58a6ff;
-            font-size: 13px;
-            margin: 14px 0 6px;
-            font-weight: 600;
-        }
-
-        .guide-area h4:first-child {
-            margin-top: 0;
-        }
-
-        .guide-area code {
-            background: #21262d;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
-            font-size: 11px;
-            color: #f0f6fc;
-        }
-
-        .guide-area pre {
-            background: #161b22;
-            padding: 10px 14px;
-            border-radius: 6px;
-            overflow-x: auto;
-            margin: 6px 0;
-            font-family: 'SFMono-Regular', 'Fira Code', 'Consolas', monospace;
-            font-size: 11px;
-            border: 1px solid #21262d;
-        }
-
-        .guide-area ul {
-            padding-left: 18px;
-            margin: 4px 0;
-        }
-
-        .guide-area li {
-            margin: 3px 0;
-        }
-
-        /* 预设面板样式 */
         .preset-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(13, 17, 23, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 60;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; inset: 0; background: rgba(13,17,23,0.9); display: flex;
+            align-items: center; justify-content: center; z-index: 60; opacity: 0;
+            pointer-events: none; transition: opacity 0.3s;
         }
-
-        .preset-modal-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
+        .preset-modal-overlay.open { opacity: 1; pointer-events: auto; }
         .preset-modal-content {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 520px;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.95);
-            transition: transform 0.3s;
+            background: #161b22; border: 1px solid #30363d; border-radius: 16px;
+            width: 90%; max-width: 520px; display: flex; flex-direction: column;
+            transform: scale(0.95); transition: transform 0.3s;
         }
-
-        .preset-modal-overlay.open .preset-modal-content {
-            transform: scale(1);
-        }
-
+        .preset-modal-overlay.open .preset-modal-content { transform: scale(1); }
         .preset-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            border: 1px solid #21262d;
-            border-radius: 10px;
-            background: #0d1117;
-            transition: border-color 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px; border: 1px solid #21262d; border-radius: 10px;
+            background: #0d1117; transition: border-color 0.2s;
         }
-
-        .preset-item:hover {
-            border-color: #30363d;
-        }
-
+        .preset-item:hover { border-color: #30363d; }
         .preset-load-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #30363d;
-            background: #21262d;
-            color: #c9d1d9;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            white-space: nowrap;
+            padding: 8px 16px; border-radius: 8px; border: 1px solid #30363d;
+            background: #21262d; color: #c9d1d9; font-size: 12px; font-weight: 500;
+            cursor: pointer; transition: all 0.2s; touch-action: manipulation; white-space: nowrap;
         }
-
-        .preset-load-btn:hover {
-            background: #238636;
-            border-color: #238636;
-            color: #fff;
-        }
-
-        .preset-load-btn:active {
-            transform: scale(0.96);
-        }
-
-        .preset-section-title {
-            color: #8b949e;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0 4px;
-            margin-bottom: 2px;
-        }
+        .preset-load-btn:hover { background: #238636; border-color: #238636; color: #fff; }
+        .preset-load-btn:active { transform: scale(0.96); }
+        .preset-section-title { color: #8b949e; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; margin-bottom: 2px; }
 
         .gh-btn {
-            background: #238636;
-            color: #fff;
-            border: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            touch-action: manipulation;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: 500;
+            background: #238636; color: #fff; border: none; transition: all 0.2s;
+            cursor: pointer; touch-action: manipulation; padding: 10px 16px; border-radius: 8px; font-weight: 500;
         }
-
-        .gh-btn:active {
-            transform: scale(0.98);
-        }
-
-        .gh-btn:hover {
-            background: #2ea043;
-        }
-
+        .gh-btn:active { transform: scale(0.98); }
+        .gh-btn:hover { background: #2ea043; }
         .gh-btn-outline {
-            background: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            transition: all 0.2s;
-            cursor: pointer;
-            touch-action: manipulation;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: 500;
+            background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+            transition: all 0.2s; cursor: pointer; touch-action: manipulation;
+            padding: 10px 16px; border-radius: 8px; font-weight: 500;
         }
+        .gh-btn-outline:active { transform: scale(0.98); }
+        .gh-btn-outline:hover { background: #30363d; border-color: #8b949e; }
 
-        .gh-btn-outline:active {
-            transform: scale(0.98);
-        }
+        .gh-label { color: #8b949e; font-size: 12px; font-weight: 500; }
+        .gh-value { color: #58a6ff; font-family: 'SFMono-Regular', monospace; font-size: 11px; }
+        .gh-section { border-top: 1px solid #21262d; padding-top: 12px; }
+        .gh-hint { color: #484f58; font-size: 10px; }
 
-        .gh-btn-outline:hover {
-            background: #30363d;
-            border-color: #8b949e;
-        }
+        .bg-preview { width: 40px; height: 40px; border-radius: 10px; border: 2px solid #30363d; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
+        .bg-preview:active { transform: scale(0.95); }
+        .bg-preview:hover { transform: scale(1.05); border-color: #58a6ff; }
 
-        .gh-label {
-            color: #8b949e;
-            font-size: 12px;
-            font-weight: 500;
-        }
+        #preview-area { transition: background-color 0.2s ease; min-height: 180px; }
 
-        .gh-value {
-            color: #58a6ff;
-            font-family: 'SFMono-Regular', monospace;
-            font-size: 11px;
-        }
-
-        .gh-section {
-            border-top: 1px solid #21262d;
-            padding-top: 12px;
-        }
-
-        .gh-hint {
-            color: #484f58;
-            font-size: 10px;
-        }
-
-        .bg-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            border: 2px solid #30363d;
-            cursor: pointer;
-            transition: all 0.2s;
-            touch-action: manipulation;
-        }
-
-        .bg-preview:active {
-            transform: scale(0.95);
-        }
-
-        .bg-preview:hover {
-            transform: scale(1.05);
-            border-color: #58a6ff;
-        }
-
-        /* 预览区域 */
-        #preview-area {
-            transition: background-color 0.2s ease;
-            min-height: 180px;
-        }
-
-        /* 滚动提示箭头 */
         .scroll-indicator {
-            position: fixed;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            animation: bounce-down 1.8s ease-in-out infinite;
-            pointer-events: none;
-            transition: opacity 0.4s;
-            opacity: 0;
+            position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 30;
+            animation: bounce-down 1.8s ease-in-out infinite; pointer-events: none;
+            transition: opacity 0.4s; opacity: 0;
         }
-
-        .scroll-indicator.show {
-            opacity: 1;
-        }
-
+        .scroll-indicator.show { opacity: 1; }
         @keyframes bounce-down {
-            0%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            50% {
-                transform: translateX(-50%) translateY(8px);
-            }
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
         }
 
-        /* 手机端优化 */
         @media (max-width: 640px) {
-            .stepper-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-            .bg-preview {
-                width: 45px;
-                height: 45px;
-            }
-            .style-btn,
-            .direction-btn {
-                padding: 10px 0;
-            }
-            .stepper-value {
-                min-width: 50px;
-                font-size: 12px;
-            }
+            .stepper-btn { width: 40px; height: 40px; font-size: 20px; }
+            .bg-preview { width: 45px; height: 45px; }
+            .style-btn, .direction-btn { padding: 10px 0; }
+            .stepper-value { min-width: 50px; font-size: 12px; }
         }
 
-        /* 参数行布局 */
-        .param-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .param-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .param-row .stepper-control { flex-shrink: 0; }
+        .param-row .slider-container { flex: 1; min-width: 120px; }
 
-        .param-row .stepper-control {
-            flex-shrink: 0;
-        }
-
-        .param-row .slider-container {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        /* PC端左右分栏 */
         @media (min-width: 1024px) {
-            .main-layout {
-                display: flex;
-                gap: 24px;
-                align-items: flex-start;
-                max-width: 1000px;
-                width: 100%;
-            }
-            .preview-panel {
-                flex: 1;
-                position: sticky;
-                top: 20px;
-            }
-            .config-panel {
-                flex: 1;
-                max-width: 420px;
-            }
-            #preview-area {
-                min-height: 320px;
-            }
+            .main-layout { display: flex; gap: 24px; align-items: flex-start; max-width: 1000px; width: 100%; }
+            .preview-panel { flex: 1; position: sticky; top: 20px; }
+            .config-panel { flex: 1; max-width: 420px; }
+            #preview-area { min-height: 320px; }
         }
     </style>
 </head>
@@ -792,13 +321,11 @@
 
     <div class="main-layout">
 
-        <!-- 左侧：预览面板 (PC端sticky) -->
         <div class="preview-panel w-full max-w-md mx-auto flex flex-col items-center gap-4">
             <div class="text-center space-y-1">
                 <h1 class="text-base font-semibold text-[#f0f6fc]">加载动画生成器</h1>
                 <p class="text-xs text-[#8b949e]">配置参数 · 导出代码</p>
             </div>
-
             <div id="preview-area" class="relative flex items-center justify-center p-8 rounded-lg border border-[#30363d] w-full" style="background-color: #0d1117;">
                 <div id="preview-classic" class="loader-wrapper">
                     <div id="orbit" class="orbit-ring"></div>
@@ -809,155 +336,131 @@
                 </div>
                 <div id="preview-breathe" style="display:none; overflow:visible;">
                     <svg id="breathe-svg" class="spinner-svg" width="80" height="80" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <g class="spinner-group">
-                            <circle class="spinner-circle" cx="24" cy="24" r="18" stroke="#58a6ff" stroke-width="4" />
-                        </g>
+                        <g class="spinner-group"><circle class="spinner-circle" cx="24" cy="24" r="18" stroke="#58a6ff" stroke-width="4" /></g>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <!-- 右侧：控制面板 -->
         <div class="config-panel w-full max-w-md mx-auto">
             <div class="flex flex-col gap-5 sm:gap-6 p-4 sm:p-6 bg-[#161b22] border border-[#30363d] rounded-xl w-full">
 
-                <!-- 预设配置按钮 -->
-                <div>
-                    <button id="preset-btn" class="w-full gh-btn-outline flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                        预设配置
-                    </button>
-                </div>
+                <div><button id="preset-btn" class="w-full gh-btn-outline flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                    预设配置
+                </button></div>
 
-                <!-- 风格选择 -->
+                <!-- ========== 常规配置区 ========== -->
                 <div id="style-section" class="space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">动画风格</span>
-                        <span id="style-value" class="gh-value">经典</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">动画风格</span><span id="style-value" class="gh-value">经典</span></div>
                     <div class="flex gap-2">
                         <button id="btn-classic" class="style-btn active flex-1">经典</button>
                         <button id="btn-minimal" class="style-btn flex-1">简约</button>
                     </div>
                 </div>
 
-                <!-- 轨道开关 -->
                 <div id="orbit-section" class="gh-section flex items-center justify-between">
-                    <div class="space-y-0.5">
-                        <span class="gh-label">显示轨道</span>
-                        <p class="gh-hint">半透明底环，随尺寸粗细变化</p>
-                    </div>
+                    <div class="space-y-0.5"><span class="gh-label">显示轨道</span><p class="gh-hint">半透明底环，随尺寸粗细变化</p></div>
                     <div id="orbit-toggle" class="toggle-switch"></div>
                 </div>
 
-                <!-- 渐变拖尾开关 -->
                 <div id="gradient-section" class="gh-section flex items-center justify-between">
-                    <div class="space-y-0.5">
-                        <span class="gh-label">渐变拖尾</span>
-                        <p class="gh-hint">关闭时尾部无渐变淡出</p>
-                    </div>
+                    <div class="space-y-0.5"><span class="gh-label">渐变拖尾</span><p class="gh-hint">关闭时尾部无渐变淡出</p></div>
                     <div id="gradient-toggle" class="toggle-switch on"></div>
                 </div>
 
-                <!-- 发光开关 -->
                 <div id="glow-section" class="gh-section flex items-center justify-between">
-                    <div class="space-y-0.5">
-                        <span class="gh-label">头部发光</span>
-                        <p class="gh-hint">经典模式头部圆点光晕</p>
-                    </div>
+                    <div class="space-y-0.5"><span class="gh-label">头部发光</span><p class="gh-hint">经典模式头部圆点光晕</p></div>
                     <div id="glow-toggle" class="toggle-switch"></div>
                 </div>
 
-                <!-- 方向 -->
                 <div id="direction-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">旋转方向</span>
-                        <span id="direction-value" class="gh-value">逆时针</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">旋转方向</span><span id="direction-value" class="gh-value">逆时针</span></div>
                     <div class="flex gap-2">
                         <button id="btn-cw" class="direction-btn flex-1">↻ 顺时针</button>
                         <button id="btn-ccw" class="direction-btn active flex-1">↺ 逆时针</button>
                     </div>
                 </div>
 
-                <!-- 速度 -->
                 <div id="speed-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">旋转速度</span>
-                        <span id="speed-value" class="gh-value">1.4s</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">旋转速度</span><span id="speed-value" class="gh-value">1.4s</span></div>
                     <div class="param-row">
                         <div class="stepper-control">
                             <button class="stepper-btn" data-action="speed" data-delta="-0.1">−</button>
                             <span id="speed-display" class="stepper-value">1.4s</span>
                             <button class="stepper-btn" data-action="speed" data-delta="0.1">+</button>
                         </div>
-                        <div class="slider-container">
-                            <input type="range" id="speed-control" min="0.1" max="3.0" step="0.1" value="1.4">
-                        </div>
+                        <div class="slider-container"><input type="range" id="speed-control" min="0.1" max="6.0" step="0.1" value="1.4"></div>
                     </div>
                 </div>
 
-                <!-- 长度 -->
                 <div id="length-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">圆弧长度</span>
-                        <span id="length-value" class="gh-value">180°</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">圆弧长度</span><span id="length-value" class="gh-value">180°</span></div>
                     <div class="param-row">
                         <div class="stepper-control">
                             <button class="stepper-btn" data-action="length" data-delta="-10">−</button>
                             <span id="length-display" class="stepper-value">180°</span>
                             <button class="stepper-btn" data-action="length" data-delta="10">+</button>
                         </div>
-                        <div class="slider-container">
-                            <input type="range" id="length-control" min="30" max="350" step="10" value="180">
-                        </div>
+                        <div class="slider-container"><input type="range" id="length-control" min="30" max="350" step="10" value="180"></div>
                     </div>
                 </div>
 
-                <!-- 尺寸 -->
                 <div id="size-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">图形尺寸</span>
-                        <span id="size-value" class="gh-value">40px</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">图形尺寸</span><span id="size-value" class="gh-value">40px</span></div>
                     <div class="param-row">
                         <div class="stepper-control">
                             <button class="stepper-btn" data-action="size" data-delta="-10">−</button>
                             <span id="size-display" class="stepper-value">40px</span>
                             <button class="stepper-btn" data-action="size" data-delta="10">+</button>
                         </div>
-                        <div class="slider-container">
-                            <input type="range" id="size-control" min="20" max="200" step="10" value="40">
-                        </div>
+                        <div class="slider-container"><input type="range" id="size-control" min="20" max="200" step="10" value="40"></div>
                     </div>
                 </div>
 
-                <!-- 粗细 -->
                 <div id="width-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label" id="width-label">线条粗细</span>
-                        <span id="width-value" class="gh-value">5px</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label" id="width-label">线条粗细</span><span id="width-value" class="gh-value">5px</span></div>
                     <div class="param-row">
                         <div class="stepper-control">
                             <button class="stepper-btn" data-action="width" data-delta="-1">−</button>
                             <span id="width-display" class="stepper-value">5px</span>
                             <button class="stepper-btn" data-action="width" data-delta="1">+</button>
                         </div>
-                        <div class="slider-container">
-                            <input type="range" id="width-control" min="1" max="20" step="1" value="5">
+                        <div class="slider-container"><input type="range" id="width-control" min="1" max="20" step="1" value="5"></div>
+                    </div>
+                </div>
+                <!-- ========== 常规配置区结束 ========== -->
+
+                <!-- ========== 呼吸圆环专属配置区（独立区域，绝不混入常规配置） ========== -->
+                <div id="breathe-min-arc-section" class="gh-section space-y-2 breathe-only">
+                    <div class="flex justify-between"><span class="gh-label">最小弧长</span><span id="breathe-min-arc-value" class="gh-value">15%</span></div>
+                    <p class="gh-hint">呼吸时圆弧收缩到的最短长度</p>
+                    <div class="param-row" style="margin-top:6px;">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="breatheMinArc" data-delta="-1">−</button>
+                            <span id="breathe-min-arc-display" class="stepper-value">15%</span>
+                            <button class="stepper-btn" data-action="breatheMinArc" data-delta="1">+</button>
                         </div>
+                        <div class="slider-container"><input type="range" id="breathe-min-arc-control" min="1" max="80" step="1" value="15"></div>
                     </div>
                 </div>
 
-                <!-- 颜色 -->
-                <div id="color-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">颜色</span>
-                        <span id="color-value" class="gh-value">#c9d1d9</span>
+                <div id="breathe-max-arc-section" class="gh-section space-y-2 breathe-only">
+                    <div class="flex justify-between"><span class="gh-label">最大弧长</span><span id="breathe-max-arc-value" class="gh-value">85%</span></div>
+                    <p class="gh-hint">呼吸时圆弧伸展到的最长长度</p>
+                    <div class="param-row" style="margin-top:6px;">
+                        <div class="stepper-control">
+                            <button class="stepper-btn" data-action="breatheMaxArc" data-delta="-1">−</button>
+                            <span id="breathe-max-arc-display" class="stepper-value">85%</span>
+                            <button class="stepper-btn" data-action="breatheMaxArc" data-delta="1">+</button>
+                        </div>
+                        <div class="slider-container"><input type="range" id="breathe-max-arc-control" min="5" max="95" step="1" value="85"></div>
                     </div>
+                </div>
+                <!-- ========== 呼吸圆环专属配置区结束 ========== -->
+
+                <div id="color-section" class="gh-section space-y-2">
+                    <div class="flex justify-between"><span class="gh-label">颜色</span><span id="color-value" class="gh-value">#c9d1d9</span></div>
                     <div class="flex items-center gap-3 flex-wrap">
                         <div class="flex gap-2 flex-1 flex-wrap">
                             <button data-color="#58a6ff" class="w-8 h-8 rounded-full bg-[#58a6ff] hover:scale-110 transition color-preset"></button>
@@ -967,18 +470,12 @@
                             <button data-color="#a371f7" class="w-8 h-8 rounded-full bg-[#a371f7] hover:scale-110 transition color-preset"></button>
                             <button data-color="#f0f6fc" class="w-8 h-8 rounded-full bg-[#f0f6fc] hover:scale-110 transition color-preset"></button>
                         </div>
-                        <div class="relative">
-                            <input type="color" id="color-picker" value="#c9d1d9">
-                        </div>
+                        <div class="relative"><input type="color" id="color-picker" value="#c9d1d9"></div>
                     </div>
                 </div>
 
-                <!-- 导出背景颜色 -->
                 <div id="bg-section" class="gh-section space-y-2">
-                    <div class="flex justify-between">
-                        <span class="gh-label">导出背景色</span>
-                        <span id="bg-color-value" class="gh-value">深色 (#0d1117)</span>
-                    </div>
+                    <div class="flex justify-between"><span class="gh-label">导出背景色</span><span id="bg-color-value" class="gh-value">深色 (#0d1117)</span></div>
                     <div class="flex gap-2 flex-wrap" id="bg-presets">
                         <div data-bg="#0d1117" data-name="深色" class="bg-preview" style="background: #0d1117;"></div>
                         <div data-bg="#ffffff" data-name="白色" class="bg-preview" style="background: #ffffff;"></div>
@@ -990,27 +487,19 @@
                         <div data-bg="#1e1e2f" data-name="暮色" class="bg-preview" style="background: #1e1e2f;"></div>
                     </div>
                     <div class="flex items-center gap-3 mt-2">
-                        <span class="gh-hint">自定义</span>
-                        <input type="color" id="bg-color-picker" value="#0d1117">
-                        <span id="custom-bg-name" class="gh-value text-xs">#0d1117</span>
+                        <span class="gh-hint">自定义</span><input type="color" id="bg-color-picker" value="#0d1117"><span id="custom-bg-name" class="gh-value text-xs">#0d1117</span>
                     </div>
                 </div>
 
-                <!-- 生成按钮 -->
-                <button id="generate-btn" class="w-full gh-btn">
-                    生成 HTML 代码
-                </button>
-
+                <button id="generate-btn" class="w-full gh-btn">生成 HTML 代码</button>
             </div>
         </div>
     </div>
 
-    <!-- 滚动提示箭头 -->
     <div id="scroll-indicator" class="scroll-indicator">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </div>
 
-    <!-- 代码模态框 -->
     <div id="modal" class="modal-overlay">
         <div class="modal-content">
             <div class="flex items-center justify-between p-4 border-b border-[#30363d]">
@@ -1022,15 +511,9 @@
                 <button id="close-modal-btn" class="text-[#8b949e] hover:text-[#f0f6fc] text-xl">&times;</button>
             </div>
             <div class="p-4 space-y-4">
-                <div id="tab-code-panel" class="tab-panel active">
-                    <div class="code-area" id="code-output"></div>
-                </div>
-                <div id="tab-preview-panel" class="tab-panel">
-                    <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts"></iframe>
-                </div>
-                <div id="tab-guide-panel" class="tab-panel">
-                    <div class="guide-area" id="guide-output"></div>
-                </div>
+                <div id="tab-code-panel" class="tab-panel active"><div class="code-area" id="code-output"></div></div>
+                <div id="tab-preview-panel" class="tab-panel"><iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts"></iframe></div>
+                <div id="tab-guide-panel" class="tab-panel"><div class="guide-area" id="guide-output"></div></div>
                 <button id="copy-btn" class="w-full gh-btn flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                     一键复制
@@ -1039,7 +522,6 @@
         </div>
     </div>
 
-    <!-- 预设模态框 -->
     <div id="preset-modal" class="preset-modal-overlay">
         <div class="preset-modal-content">
             <div class="flex items-center justify-between p-4 border-b border-[#30363d]">
@@ -1050,46 +532,16 @@
                 <div>
                     <div class="preset-section-title">常规预设</div>
                     <div class="space-y-2">
-                        <div class="preset-item">
-                            <div>
-                                <div class="text-[#f0f6fc] text-sm font-medium">效果最佳</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 轨道发光全开 · 80px</div>
-                            </div>
-                            <button class="preset-load-btn" data-preset="best">加载</button>
-                        </div>
-                        <div class="preset-item">
-                            <div>
-                                <div class="text-[#f0f6fc] text-sm font-medium">均衡</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 极简配置 · 40px</div>
-                            </div>
-                            <button class="preset-load-btn" data-preset="balanced">加载</button>
-                        </div>
-                        <div class="preset-item">
-                            <div>
-                                <div class="text-[#f0f6fc] text-sm font-medium">代码最短</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">简约 · 顺时针 · 最小体积 · 36px</div>
-                            </div>
-                            <button class="preset-load-btn" data-preset="minimal">加载</button>
-                        </div>
+                        <div class="preset-item"><div><div class="text-[#f0f6fc] text-sm font-medium">效果最佳</div><div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 轨道发光全开 · 80px</div></div><button class="preset-load-btn" data-preset="best">加载</button></div>
+                        <div class="preset-item"><div><div class="text-[#f0f6fc] text-sm font-medium">均衡</div><div class="text-[#8b949e] text-xs mt-0.5">经典 · 逆时针 · 极简配置 · 40px</div></div><button class="preset-load-btn" data-preset="balanced">加载</button></div>
+                        <div class="preset-item"><div><div class="text-[#f0f6fc] text-sm font-medium">代码最短</div><div class="text-[#8b949e] text-xs mt-0.5">简约 · 顺时针 · 最小体积 · 36px</div></div><button class="preset-load-btn" data-preset="minimal">加载</button></div>
                     </div>
                 </div>
                 <div>
                     <div class="preset-section-title">特殊预设</div>
                     <div class="space-y-2">
-                        <div class="preset-item">
-                            <div>
-                                <div class="text-[#f0f6fc] text-sm font-medium">经典圆环</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">简约 · 逆时针 · 轨道 · 短弧 · 50px</div>
-                            </div>
-                            <button class="preset-load-btn" data-preset="ring">加载</button>
-                        </div>
-                        <div class="preset-item">
-                            <div>
-                                <div class="text-[#f0f6fc] text-sm font-medium">呼吸圆环</div>
-                                <div class="text-[#8b949e] text-xs mt-0.5">SVG · 弧长呼吸 · 线性流畅 · 无缝循环</div>
-                            </div>
-                            <button class="preset-load-btn" data-preset="breathe">加载</button>
-                        </div>
+                        <div class="preset-item"><div><div class="text-[#f0f6fc] text-sm font-medium">经典圆环</div><div class="text-[#8b949e] text-xs mt-0.5">简约 · 逆时针 · 轨道 · 短弧 · 50px</div></div><button class="preset-load-btn" data-preset="ring">加载</button></div>
+                        <div class="preset-item"><div><div class="text-[#f0f6fc] text-sm font-medium">呼吸圆环</div><div class="text-[#8b949e] text-xs mt-0.5">SVG · 弧长呼吸 · 线性流畅 · 无缝循环</div></div><button class="preset-load-btn" data-preset="breathe">加载</button></div>
                     </div>
                 </div>
             </div>
@@ -1097,7 +549,6 @@
     </div>
 
     <script>
-        // DOM 元素
         var root = document.documentElement;
         var loader = document.getElementById('loader');
         var orbit = document.getElementById('orbit');
@@ -1107,669 +558,263 @@
         var previewClassic = document.getElementById('preview-classic');
         var previewBreathe = document.getElementById('preview-breathe');
         var breatheSvg = document.getElementById('breathe-svg');
+        var CIRCUMFERENCE = 113.1;
 
-        // 呼吸模式下需要隐藏的section ID
-        var sectionsToHideInBreathe = [
-            'style-section',
-            'orbit-section',
-            'gradient-section',
-            'glow-section',
-            'direction-section',
-            'length-section'
-        ];
+        var sectionsToHideInBreathe = ['style-section','orbit-section','gradient-section','glow-section','direction-section','length-section'];
+        var breatheOnlySections = ['breathe-min-arc-section','breathe-max-arc-section'];
 
-        // 预设配置定义
         var presets = {
-            best: {
-                style: 'classic',
-                orbit: true,
-                gradientTail: true,
-                glow: true,
-                direction: -1,
-                speed: 1.2,
-                tailLength: 280,
-                size: 80,
-                trackWidth: 6,
-                color: '#58a6ff',
-                exportBg: '#0d1117',
-                exportBgName: '深色',
-                mode: 'configurable'
-            },
-            balanced: {
-                style: 'classic',
-                orbit: false,
-                gradientTail: true,
-                glow: false,
-                direction: -1,
-                speed: 1.4,
-                tailLength: 180,
-                size: 40,
-                trackWidth: 5,
-                color: '#c9d1d9',
-                exportBg: '#0d1117',
-                exportBgName: '深色',
-                mode: 'configurable'
-            },
-            minimal: {
-                style: 'minimal',
-                orbit: false,
-                gradientTail: false,
-                glow: false,
-                direction: 1,
-                speed: 1.5,
-                tailLength: 120,
-                size: 36,
-                trackWidth: 2,
-                color: '#8b949e',
-                exportBg: '#0d1117',
-                exportBgName: '深色',
-                mode: 'configurable'
-            },
-            ring: {
-                style: 'minimal',
-                orbit: true,
-                gradientTail: false,
-                glow: false,
-                direction: -1,
-                speed: 1.4,
-                tailLength: 90,
-                size: 50,
-                trackWidth: 3,
-                color: '#c9d1d9',
-                exportBg: '#0d1117',
-                exportBgName: '深色',
-                mode: 'configurable'
-            },
-            breathe: {
-                style: 'breathe',
-                color: '#58a6ff',
-                size: 80,
-                speed: 2.4,
-                trackWidth: 4,
-                exportBg: '#0d1117',
-                exportBgName: '深色',
-                mode: 'breathe'
-            }
+            best: { style:'classic', orbit:true, gradientTail:true, glow:true, direction:-1, speed:1.2, tailLength:280, size:80, trackWidth:6, color:'#58a6ff', exportBg:'#0d1117', exportBgName:'深色', mode:'configurable' },
+            balanced: { style:'classic', orbit:false, gradientTail:true, glow:false, direction:-1, speed:1.4, tailLength:180, size:40, trackWidth:5, color:'#c9d1d9', exportBg:'#0d1117', exportBgName:'深色', mode:'configurable' },
+            minimal: { style:'minimal', orbit:false, gradientTail:false, glow:false, direction:1, speed:1.5, tailLength:120, size:36, trackWidth:2, color:'#8b949e', exportBg:'#0d1117', exportBgName:'深色', mode:'configurable' },
+            ring: { style:'minimal', orbit:true, gradientTail:false, glow:false, direction:-1, speed:1.4, tailLength:90, size:50, trackWidth:3, color:'#c9d1d9', exportBg:'#0d1117', exportBgName:'深色', mode:'configurable' },
+            breathe: { style:'breathe', color:'#58a6ff', size:80, speed:2.4, trackWidth:4, breatheMinArc:15, breatheMaxArc:85, exportBg:'#0d1117', exportBgName:'深色', mode:'breathe' }
         };
 
-        // 配置对象 - 默认均衡
-        var config = {
-            style: 'classic',
-            orbit: false,
-            gradientTail: true,
-            glow: false,
-            direction: -1,
-            speed: 1.4,
-            tailLength: 180,
-            size: 40,
-            trackWidth: 5,
-            color: '#c9d1d9',
-            exportBg: '#0d1117',
-            exportBgName: '深色',
-            mode: 'configurable'
-        };
-
-        // 当前是否呼吸模式
+        var config = { style:'classic', orbit:false, gradientTail:true, glow:false, direction:-1, speed:1.4, tailLength:180, size:40, trackWidth:5, color:'#c9d1d9', breatheMinArc:15, breatheMaxArc:85, exportBg:'#0d1117', exportBgName:'深色', mode:'configurable' };
         var isBreatheMode = false;
 
         function setSectionsVisibility(hidden) {
             sectionsToHideInBreathe.forEach(function(id) {
-                var section = document.getElementById(id);
-                if (!section) return;
-                if (hidden) {
-                    section.classList.add('breathe-hidden');
-                } else {
-                    section.classList.remove('breathe-hidden');
-                }
+                var s = document.getElementById(id); if (!s) return;
+                s.classList.toggle('breathe-hidden', hidden);
             });
-
-            var widthLabel = document.getElementById('width-label');
-            if (widthLabel) {
-                widthLabel.textContent = hidden ? '圆环粗细' : '线条粗细';
-            }
-            var widthHint = document.querySelector('#width-section .gh-hint');
-            if (widthHint) {
-                widthHint.textContent = hidden ? 'SVG 描边宽度' : '轨道和圆弧的线条宽度';
-            }
+            breatheOnlySections.forEach(function(id) {
+                var s = document.getElementById(id); if (!s) return;
+                s.classList.toggle('visible', hidden);
+            });
+            var wl = document.getElementById('width-label'); if (wl) wl.textContent = hidden ? '圆环粗细' : '线条粗细';
+            var wh = document.querySelector('#width-section .gh-hint'); if (wh) wh.textContent = hidden ? 'SVG 描边宽度' : '轨道和圆弧的线条宽度';
         }
 
         function switchPreviewMode(mode) {
-            if (mode === 'breathe') {
-                previewClassic.style.display = 'none';
-                previewBreathe.style.display = 'block';
-                isBreatheMode = true;
-            } else {
-                previewClassic.style.display = 'flex';
-                previewBreathe.style.display = 'none';
-                isBreatheMode = false;
-            }
+            if (mode === 'breathe') { previewClassic.style.display='none'; previewBreathe.style.display='block'; isBreatheMode=true; }
+            else { previewClassic.style.display='flex'; previewBreathe.style.display='none'; isBreatheMode=false; }
         }
 
         function updateBreathePreview() {
             if (!isBreatheMode) return;
-            var size = config.size;
-            breatheSvg.setAttribute('width', size);
-            breatheSvg.setAttribute('height', size);
-            var circle = breatheSvg.querySelector('.spinner-circle');
-            if (circle) {
-                circle.setAttribute('stroke', config.color);
-                circle.setAttribute('stroke-width', config.trackWidth);
-            }
-            breatheSvg.style.filter = 'none';
-            previewBreathe.style.filter = 'none';
-            var group = breatheSvg.querySelector('.spinner-group');
-            if (group) {
-                group.style.animationDuration = config.speed + 's';
-            }
-            if (circle) {
-                circle.style.animationDuration = config.speed + 's';
-            }
+            breatheSvg.setAttribute('width', config.size); breatheSvg.setAttribute('height', config.size);
+            var c = breatheSvg.querySelector('.spinner-circle');
+            if (c) { c.setAttribute('stroke', config.color); c.setAttribute('stroke-width', config.trackWidth); }
+            breatheSvg.style.filter='none'; previewBreathe.style.filter='none';
+            breatheSvg.style.setProperty('--breathe-min-arc', (config.breatheMinArc/100*CIRCUMFERENCE).toFixed(3));
+            breatheSvg.style.setProperty('--breathe-max-arc', (config.breatheMaxArc/100*CIRCUMFERENCE).toFixed(3));
+            var g = breatheSvg.querySelector('.spinner-group'); if (g) g.style.animationDuration = config.speed+'s';
+            if (c) c.style.animationDuration = config.speed+'s';
         }
 
-        // ========== 更新UI函数 ==========
         function updateSpeedUI() {
-            document.getElementById('speed-control').value = config.speed;
-            document.getElementById('speed-value').textContent = config.speed.toFixed(1) + 's';
-            document.getElementById('speed-display').textContent = config.speed.toFixed(1) + 's';
-            root.style.setProperty('--speed', config.speed + 's');
+            document.getElementById('speed-control').value=config.speed;
+            document.getElementById('speed-value').textContent=config.speed.toFixed(1)+'s';
+            document.getElementById('speed-display').textContent=config.speed.toFixed(1)+'s';
+            root.style.setProperty('--speed', config.speed+'s');
             if (isBreatheMode) updateBreathePreview();
         }
-
         function updateLengthUI() {
-            document.getElementById('length-control').value = config.tailLength;
-            document.getElementById('length-value').textContent = config.tailLength + '°';
-            document.getElementById('length-display').textContent = config.tailLength + '°';
-            root.style.setProperty('--tail-length', config.tailLength + 'deg');
+            document.getElementById('length-control').value=config.tailLength;
+            document.getElementById('length-value').textContent=config.tailLength+'°';
+            document.getElementById('length-display').textContent=config.tailLength+'°';
+            root.style.setProperty('--tail-length', config.tailLength+'deg');
         }
-
         function updateSizeUI() {
-            document.getElementById('size-control').value = config.size;
-            document.getElementById('size-value').textContent = config.size + 'px';
-            document.getElementById('size-display').textContent = config.size + 'px';
-            root.style.setProperty('--loader-size', config.size + 'px');
+            document.getElementById('size-control').value=config.size;
+            document.getElementById('size-value').textContent=config.size+'px';
+            document.getElementById('size-display').textContent=config.size+'px';
+            root.style.setProperty('--loader-size', config.size+'px');
             if (isBreatheMode) updateBreathePreview();
         }
-
         function updateWidthUI() {
-            document.getElementById('width-control').value = config.trackWidth;
-            document.getElementById('width-value').textContent = config.trackWidth + 'px';
-            document.getElementById('width-display').textContent = config.trackWidth + 'px';
-            root.style.setProperty('--track-width', config.trackWidth + 'px');
+            document.getElementById('width-control').value=config.trackWidth;
+            document.getElementById('width-value').textContent=config.trackWidth+'px';
+            document.getElementById('width-display').textContent=config.trackWidth+'px';
+            root.style.setProperty('--track-width', config.trackWidth+'px');
+            if (isBreatheMode) updateBreathePreview();
+        }
+        function updateBreatheMinArcUI() {
+            document.getElementById('breathe-min-arc-control').value=config.breatheMinArc;
+            document.getElementById('breathe-min-arc-value').textContent=config.breatheMinArc+'%';
+            document.getElementById('breathe-min-arc-display').textContent=config.breatheMinArc+'%';
+            if (isBreatheMode) updateBreathePreview();
+        }
+        function updateBreatheMaxArcUI() {
+            document.getElementById('breathe-max-arc-control').value=config.breatheMaxArc;
+            document.getElementById('breathe-max-arc-value').textContent=config.breatheMaxArc+'%';
+            document.getElementById('breathe-max-arc-display').textContent=config.breatheMaxArc+'%';
             if (isBreatheMode) updateBreathePreview();
         }
 
         function updateLoaderClass() {
             if (isBreatheMode) return;
-            var baseClass = config.style === 'classic' ? 'loader-classic' : 'loader-minimal';
-            var gradientClass = config.gradientTail ? '' : 'no-gradient';
-            var glowClass = (config.style === 'classic' && config.glow) ? 'glow' : '';
-            loader.className = 'loader-container ' + baseClass + ' ' + gradientClass + ' ' + glowClass;
-            loader.className = loader.className.trim();
+            var b = config.style==='classic'?'loader-classic':'loader-minimal';
+            var g = config.gradientTail?'':'no-gradient';
+            var gl = (config.style==='classic'&&config.glow)?'glow':'';
+            loader.className = ('loader-container '+b+' '+g+' '+gl).trim();
         }
-
-        function updateOrbitUI() {
-            var toggle = document.getElementById('orbit-toggle');
-            toggle.classList.toggle('on', config.orbit);
-            orbit.classList.toggle('show', config.orbit);
-        }
-
+        function updateOrbitUI() { var t=document.getElementById('orbit-toggle'); t.classList.toggle('on', config.orbit); orbit.classList.toggle('show', config.orbit); }
         function updateGradientUI() {
-            var toggle = document.getElementById('gradient-toggle');
-            toggle.classList.toggle('on', config.gradientTail);
-            if (config.style === 'classic') {
-                toggle.classList.add('disabled');
-                toggle.classList.add('on');
-                if (!config.gradientTail) {
-                    config.gradientTail = true;
-                }
-            } else {
-                toggle.classList.remove('disabled');
-            }
+            var t=document.getElementById('gradient-toggle'); t.classList.toggle('on', config.gradientTail);
+            if (config.style==='classic') { t.classList.add('disabled'); t.classList.add('on'); if(!config.gradientTail) config.gradientTail=true; }
+            else t.classList.remove('disabled');
         }
-
-        function updateGlowUI() {
-            var toggle = document.getElementById('glow-toggle');
-            toggle.classList.toggle('on', config.glow);
-        }
-
+        function updateGlowUI() { document.getElementById('glow-toggle').classList.toggle('on', config.glow); }
         function updateStyleUI() {
-            document.getElementById('btn-classic').classList.toggle('active', config.style === 'classic');
-            document.getElementById('btn-minimal').classList.toggle('active', config.style === 'minimal');
-            var styleText = config.style === 'classic' ? '经典' : (config.style === 'minimal' ? '简约' : '呼吸');
-            document.getElementById('style-value').textContent = styleText;
-            glowSection.style.display = (config.style === 'minimal' || config.style === 'breathe') ? 'none' : 'flex';
-            updateGradientUI();
-            updateLoaderClass();
+            document.getElementById('btn-classic').classList.toggle('active', config.style==='classic');
+            document.getElementById('btn-minimal').classList.toggle('active', config.style==='minimal');
+            document.getElementById('style-value').textContent = config.style==='classic'?'经典':(config.style==='minimal'?'简约':'呼吸');
+            glowSection.style.display = (config.style==='minimal'||config.style==='breathe')?'none':'flex';
+            updateGradientUI(); updateLoaderClass();
         }
-
         function updateDirectionUI() {
-            document.getElementById('btn-cw').classList.toggle('active', config.direction === 1);
-            document.getElementById('btn-ccw').classList.toggle('active', config.direction === -1);
-            document.getElementById('direction-value').textContent = config.direction === 1 ? '顺时针' : '逆时针';
+            document.getElementById('btn-cw').classList.toggle('active', config.direction===1);
+            document.getElementById('btn-ccw').classList.toggle('active', config.direction===-1);
+            document.getElementById('direction-value').textContent = config.direction===1?'顺时针':'逆时针';
             root.style.setProperty('--rotation-direction', config.direction);
         }
-
-        function updateColorUI() {
-            root.style.setProperty('--accent-color', config.color);
-            colorPicker.value = config.color;
-            document.getElementById('color-value').textContent = config.color;
-            if (isBreatheMode) updateBreathePreview();
-        }
-
+        function updateColorUI() { root.style.setProperty('--accent-color', config.color); colorPicker.value=config.color; document.getElementById('color-value').textContent=config.color; if(isBreatheMode) updateBreathePreview(); }
         function updateExportBgUI() {
-            previewArea.style.backgroundColor = config.exportBg;
-            document.getElementById('bg-color-value').textContent = config.exportBgName + ' (' + config.exportBg + ')';
-            document.getElementById('custom-bg-name').textContent = config.exportBg;
-            document.getElementById('bg-color-picker').value = config.exportBg;
-
-            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(el) {
-                el.style.borderColor = '#30363d';
-                if (el.getAttribute('data-bg') === config.exportBg) {
-                    el.style.borderColor = '#58a6ff';
-                }
-            });
+            previewArea.style.backgroundColor=config.exportBg;
+            document.getElementById('bg-color-value').textContent=config.exportBgName+' ('+config.exportBg+')';
+            document.getElementById('custom-bg-name').textContent=config.exportBg;
+            document.getElementById('bg-color-picker').value=config.exportBg;
+            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(el){ el.style.borderColor='#30363d'; if(el.getAttribute('data-bg')===config.exportBg) el.style.borderColor='#58a6ff'; });
         }
 
         function refreshAllUI() {
-            updateSpeedUI();
-            updateSizeUI();
-            updateWidthUI();
-            if (!isBreatheMode) {
-                updateLengthUI();
-                updateLoaderClass();
-                updateOrbitUI();
-                updateGradientUI();
-                updateGlowUI();
-                updateStyleUI();
-                updateDirectionUI();
-            }
-            updateColorUI();
-            updateExportBgUI();
+            updateSpeedUI(); updateSizeUI(); updateWidthUI();
+            if (!isBreatheMode) { updateLengthUI(); updateLoaderClass(); updateOrbitUI(); updateGradientUI(); updateGlowUI(); updateStyleUI(); updateDirectionUI(); }
+            if (isBreatheMode) { updateBreatheMinArcUI(); updateBreatheMaxArcUI(); }
+            updateColorUI(); updateExportBgUI();
         }
 
-        // ========== 参数修改 ==========
-        function setStyle(style) {
-            if (config.style === style) return;
-            config.style = style;
-            if (style === 'classic') {
-                config.gradientTail = true;
-            }
-            updateStyleUI();
-            updateLoaderClass();
-            updateGradientUI();
+        function setStyle(s) { if(config.style===s) return; config.style=s; if(s==='classic') config.gradientTail=true; updateStyleUI(); updateLoaderClass(); updateGradientUI(); }
+        function toggleOrbit() { config.orbit=!config.orbit; updateOrbitUI(); }
+        function toggleGradient() { if(config.style==='classic') return; config.gradientTail=!config.gradientTail; updateGradientUI(); updateLoaderClass(); }
+        function toggleGlow() { config.glow=!config.glow; updateGlowUI(); updateLoaderClass(); }
+        function setDirection(d) { if(config.direction===d) return; config.direction=d; updateDirectionUI(); }
+        function setSpeed(v) { var n=Math.min(6,Math.max(0.1,parseFloat(v))); if(isNaN(n)) return; config.speed=n; updateSpeedUI(); }
+        function setLength(v) { var n=Math.min(350,Math.max(30,parseInt(v))); if(isNaN(n)) return; config.tailLength=n; updateLengthUI(); }
+        function setSize(v) { var n=Math.min(200,Math.max(20,parseInt(v))); if(isNaN(n)) return; config.size=n; updateSizeUI(); }
+        function setWidth(v) { var n=Math.min(20,Math.max(1,parseInt(v))); if(isNaN(n)) return; config.trackWidth=n; updateWidthUI(); }
+        function setBreatheMinArc(v) { var n=Math.min(80,Math.max(1,parseInt(v))); if(isNaN(n)) return; if(n>=config.breatheMaxArc) n=config.breatheMaxArc-1; config.breatheMinArc=n; updateBreatheMinArcUI(); }
+        function setBreatheMaxArc(v) { var n=Math.min(95,Math.max(5,parseInt(v))); if(isNaN(n)) return; if(n<=config.breatheMinArc) n=config.breatheMinArc+1; config.breatheMaxArc=n; updateBreatheMaxArcUI(); }
+        function setColor(c) { config.color=c; updateColorUI(); }
+        function setExportBg(c,n) { config.exportBg=c; config.exportBgName=n; updateExportBgUI(); }
+
+        function handleStepper(a,d) {
+            switch(a) { case 'speed': setSpeed(config.speed+d); break; case 'length': setLength(config.tailLength+d); break; case 'size': setSize(config.size+d); break; case 'width': setWidth(config.trackWidth+d); break; case 'breatheMinArc': setBreatheMinArc(config.breatheMinArc+d); break; case 'breatheMaxArc': setBreatheMaxArc(config.breatheMaxArc+d); break; }
         }
 
-        function toggleOrbit() {
-            config.orbit = !config.orbit;
-            updateOrbitUI();
-        }
-
-        function toggleGradient() {
-            if (config.style === 'classic') return;
-            config.gradientTail = !config.gradientTail;
-            updateGradientUI();
-            updateLoaderClass();
-        }
-
-        function toggleGlow() {
-            config.glow = !config.glow;
-            updateGlowUI();
-            updateLoaderClass();
-        }
-
-        function setDirection(dir) {
-            if (config.direction === dir) return;
-            config.direction = dir;
-            updateDirectionUI();
-        }
-
-        function setSpeed(value) {
-            var newVal = Math.min(3.0, Math.max(0.1, parseFloat(value)));
-            if (isNaN(newVal)) return;
-            config.speed = newVal;
-            updateSpeedUI();
-        }
-
-        function setLength(value) {
-            var newVal = Math.min(350, Math.max(30, parseInt(value)));
-            if (isNaN(newVal)) return;
-            config.tailLength = newVal;
-            updateLengthUI();
-        }
-
-        function setSize(value) {
-            var newVal = Math.min(200, Math.max(20, parseInt(value)));
-            if (isNaN(newVal)) return;
-            config.size = newVal;
-            updateSizeUI();
-        }
-
-        function setWidth(value) {
-            var newVal = Math.min(20, Math.max(1, parseInt(value)));
-            if (isNaN(newVal)) return;
-            config.trackWidth = newVal;
-            updateWidthUI();
-        }
-
-        function setColor(color) {
-            config.color = color;
-            updateColorUI();
-        }
-
-        function setExportBg(color, name) {
-            config.exportBg = color;
-            config.exportBgName = name;
-            updateExportBgUI();
-        }
-
-        function handleStepper(action, delta) {
-            switch (action) {
-                case 'speed': setSpeed(config.speed + delta); break;
-                case 'length': setLength(config.tailLength + delta); break;
-                case 'size': setSize(config.size + delta); break;
-                case 'width': setWidth(config.trackWidth + delta); break;
-            }
-        }
-
-        function loadPreset(presetName) {
-            var preset = presets[presetName];
-            if (!preset) return;
-            Object.assign(config, preset);
-
-            if (config.mode === 'breathe') {
-                switchPreviewMode('breathe');
-                setSectionsVisibility(true);
-                updateBreathePreview();
-                updateColorUI();
-                updateSizeUI();
-                updateSpeedUI();
-                updateWidthUI();
-                updateExportBgUI();
-            } else {
-                switchPreviewMode('classic');
-                setSectionsVisibility(false);
-                refreshAllUI();
-            }
-
+        function loadPreset(name) {
+            var p=presets[name]; if(!p) return; Object.assign(config, p);
+            if (config.mode==='breathe') { switchPreviewMode('breathe'); setSectionsVisibility(true); updateBreathePreview(); updateColorUI(); updateSizeUI(); updateSpeedUI(); updateWidthUI(); updateBreatheMinArcUI(); updateBreatheMaxArcUI(); updateExportBgUI(); }
+            else { switchPreviewMode('classic'); setSectionsVisibility(false); refreshAllUI(); }
             closePresetModal();
         }
 
-        // ========== 生成使用说明 ==========
-        function generateGuide() {
-            var isBreathe = config.mode === 'breathe';
-            var html = '';
-
-            if (isBreathe) {
-                html = '<h4>如何使用这段呼吸圆环代码</h4>\n';
-                html += '<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>，你可以通过以下方式使用：</p>\n\n';
-
-                html += '<h4>方式一：直接使用（推荐新手）</h4>\n';
-                html += '<p>复制全部代码，保存为 <code>loading.html</code>，在需要展示加载动画时打开或嵌入。</p>\n\n';
-
-                html += '<h4>方式二：整合到现有项目</h4>\n';
-                html += '<p>将 <code>&lt;style&gt;</code> 部分复制到你的 CSS 文件中，将 <code>&lt;svg&gt;</code> 部分复制到 HTML 中需要显示加载动画的位置。</p>\n';
-                html += '<p><strong>核心代码（SVG + CSS）：</strong></p>\n';
-                html += '<pre>&lt;svg class="spinner-svg" viewBox="0 0 48 48"&gt;\n  &lt;g class="spinner-group"&gt;\n    &lt;circle class="spinner-circle"\n      cx="24" cy="24" r="18" /&gt;\n  &lt;/g&gt;\n&lt;/svg&gt;</pre>\n\n';
-
-                html += '<h4>方式三：React / Vue 中使用</h4>\n';
-                html += '<p>将 CSS 动画定义放入全局样式或组件样式中，SVG 部分直接作为 JSX / template 使用：</p>\n';
-                html += '<pre>// React 示例\nfunction LoadingSpinner() {\n  return (\n    &lt;svg className="spinner-svg"\n      viewBox="0 0 48 48"&gt;\n      &lt;g className="spinner-group"&gt;\n        &lt;circle className="spinner-circle"\n          cx="24" cy="24" r="18" /&gt;\n      &lt;/g&gt;\n    &lt;/svg&gt;\n  );\n}</pre>\n\n';
-
-                html += '<h4>可调整的参数</h4>\n';
-                html += '<ul>\n';
-                html += '<li><strong>尺寸</strong>：修改 <code>.spinner-svg</code> 的 <code>width</code> / <code>height</code></li>\n';
-                html += '<li><strong>颜色</strong>：修改 <code>.spinner-circle</code> 的 <code>stroke</code> 属性</li>\n';
-                html += '<li><strong>粗细</strong>：修改 <code>stroke-width</code> 属性</li>\n';
-                html += '<li><strong>速度</strong>：修改 <code>animation</code> 中的 <code>' + config.speed + 's</code></li>\n';
-                html += '<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n';
-                html += '</ul>\n';
-            } else {
-                html = '<h4>如何使用这段加载动画代码</h4>\n';
-                html += '<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>，你可以通过以下方式使用：</p>\n\n';
-
-                html += '<h4>方式一：直接使用（推荐新手）</h4>\n';
-                html += '<p>复制全部代码，保存为 <code>loading.html</code>，在需要展示加载动画时打开或嵌入到 <code>&lt;iframe&gt;</code> 中。</p>\n\n';
-
-                html += '<h4>方式二：整合到现有项目</h4>\n';
-                html += '<p>将 <code>&lt;style&gt;</code> 标签内的 CSS 复制到你的样式文件中，将 <code>&lt;body&gt;</code> 内的 HTML 放到需要显示加载动画的位置。</p>\n';
-                html += '<p><strong>核心 HTML 结构：</strong></p>\n';
-                html += '<pre>&lt;div class="wrapper"&gt;\n  &lt;div class="loader"&gt;\n    &lt;div class="loader-ring"&gt;&lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;</pre>\n';
-                html += '<p>如果开启了轨道选项，额外加上 <code>&lt;div class="orbit"&gt;&lt;/div&gt;</code>。</p>\n\n';
-
-                html += '<h4>方式三：React / Vue 中使用</h4>\n';
-                html += '<p>将 CSS 动画定义放入全局样式，HTML 结构作为组件：</p>\n';
-                html += '<pre>// React 示例\nfunction LoadingSpinner() {\n  return (\n    &lt;div className="wrapper"&gt;\n      &lt;div className="loader"&gt;\n        &lt;div className="loader-ring" /&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  );\n}</pre>\n\n';
-
-                html += '<h4>可调整的参数</h4>\n';
-                html += '<ul>\n';
-                html += '<li><strong>尺寸</strong>：修改 <code>.loader</code> 的 <code>width</code> / <code>height</code></li>\n';
-                html += '<li><strong>颜色</strong>：修改 <code>conic-gradient</code> 中的颜色值</li>\n';
-                html += '<li><strong>粗细</strong>：修改 <code>mask</code> 中的 <code>calc(100% - Xpx)</code></li>\n';
-                html += '<li><strong>速度</strong>：修改 <code>animation</code> 中的时长</li>\n';
-                html += '<li><strong>弧长</strong>：修改 <code>conic-gradient</code> 中的角度值</li>\n';
-                html += '<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n';
-                html += '</ul>\n';
-            }
-
-            html += '\n<h4>常见问题</h4>\n';
-            html += '<ul>\n';
-            html += '<li><strong>动画不显示？</strong> 检查 CSS 是否正确引入，<code>@keyframes</code> 是否被复制。</li>\n';
-            html += '<li><strong>尺寸不对？</strong> 确保容器没有额外的宽高限制。</li>\n';
-            html += '<li><strong>颜色不生效？</strong> 经典/简约模式颜色在 CSS 中硬编码，需手动替换 <code>conic-gradient</code> 中的色值。</li>\n';
-            html += '</ul>\n';
-
-            return html;
-        }
-
-        // ========== 生成HTML ==========
         function generateHTML() {
-            if (config.mode === 'breathe') {
-                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n            font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Helvetica, Arial, sans-serif;\n        }\n        .spinner-svg {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: block;\n            overflow: visible;\n        }\n        .spinner-group {\n            animation: smart-rotate ' + config.speed + 's linear infinite;\n            transform-origin: center;\n        }\n        .spinner-circle {\n            fill: none;\n            stroke: ' + config.color + ';\n            stroke-width: ' + config.trackWidth + ';\n            stroke-linecap: round;\n            animation: arc-linear-breathe ' + config.speed + 's linear infinite;\n        }\n        @keyframes smart-rotate {\n            0% { transform: rotate(0deg); }\n            50% { transform: rotate(360deg); }\n            100% { transform: rotate(1080deg); }\n        }\n        @keyframes arc-linear-breathe {\n            0%, 100% { stroke-dasharray: 16.965, 113.1; }\n            50% { stroke-dasharray: 96.14, 113.1; }\n        }\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group">\n            <circle class="spinner-circle" cx="24" cy="24" r="18" />\n        </g>\n    </svg>\n</body>\n</html>';
+            if (config.mode==='breathe') {
+                var minA=(config.breatheMinArc/100*CIRCUMFERENCE).toFixed(3), maxA=(config.breatheMaxArc/100*CIRCUMFERENCE).toFixed(3);
+                return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        *{margin:0;padding:0;box-sizing:border-box}\n        body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:'+config.exportBg+';font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif}\n        .spinner-svg{width:'+config.size+'px;height:'+config.size+'px;display:block;overflow:visible}\n        .spinner-group{animation:smart-rotate '+config.speed+'s linear infinite;transform-origin:center}\n        .spinner-circle{fill:none;stroke:'+config.color+';stroke-width:'+config.trackWidth+';stroke-linecap:round;animation:arc-linear-breathe '+config.speed+'s linear infinite}\n        @keyframes smart-rotate{0%{transform:rotate(0deg)}50%{transform:rotate(360deg)}100%{transform:rotate(1080deg)}}\n        @keyframes arc-linear-breathe{0%,100%{stroke-dasharray:'+minA+','+CIRCUMFERENCE+'}50%{stroke-dasharray:'+maxA+','+CIRCUMFERENCE+'}}\n    </style>\n</head>\n<body>\n    <svg class="spinner-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="status" aria-label="加载中">\n        <g class="spinner-group"><circle class="spinner-circle" cx="24" cy="24" r="18"/></g>\n    </svg>\n</body>\n</html>';
             }
-
-            var isClassic = config.style === 'classic';
-            var solidEnd = config.gradientTail
-                ? (isClassic ? config.tailLength * 0.2 : config.tailLength * 0.15)
-                : config.tailLength;
-
-            var css = '';
-
-            if (config.orbit) {
-                css += '\n        .orbit {\n            position: absolute;\n            inset: 0;\n            border-radius: 50%;\n            border: ' + config.trackWidth + 'px solid ' + config.color + '18;\n        }';
-            }
-
-            css += '\n        .loader {\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            position: relative;\n            animation: spin ' + config.speed + 's linear infinite;\n        }\n        @keyframes spin {\n            0% { transform: rotate(0deg); }\n            100% { transform: rotate(' + (config.direction * 360) + 'deg); }\n        }\n        .loader-ring {\n            width: 100%;\n            height: 100%;\n            border-radius: 50%;\n            background: conic-gradient(\n                from 0deg,\n                ' + config.color + ' 0deg,\n                ' + config.color + ' ' + solidEnd + 'deg,\n                transparent ' + config.tailLength + 'deg,\n                transparent 360deg\n            );\n            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - ' + config.trackWidth + 'px), #fff calc(100% - ' + config.trackWidth + 'px + 1px));\n            mask: radial-gradient(farthest-side, transparent calc(100% - ' + config.trackWidth + 'px), #fff calc(100% - ' + config.trackWidth + 'px + 1px));\n        }';
-
-            var html = '';
-
-            if (config.orbit) {
-                html += '\n    <div class="orbit"></div>';
-            }
-
-            html += '\n    <div class="loader">\n        <div class="loader-ring"></div>';
-
-            if (isClassic) {
-                var glowCSS = config.glow ? 'box-shadow: 0 0 10px ' + config.color + ', 0 0 20px ' + config.color + ';' : '';
-                css += '\n        .loader::before {\n            content: \'\';\n            position: absolute;\n            top: 0;\n            left: 50%;\n            transform: translateX(-50%);\n            width: ' + config.trackWidth + 'px;\n            height: ' + config.trackWidth + 'px;\n            background: ' + config.color + ';\n            border-radius: 50%;\n            ' + glowCSS + '\n        }';
-            }
-
-            html += '\n    </div>';
-
-            var wrapperCSS = config.orbit ? '\n        .wrapper {\n            position: relative;\n            width: ' + config.size + 'px;\n            height: ' + config.size + 'px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n        }' : '';
-
-            return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n        body {\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            background: ' + config.exportBg + ';\n        }' + wrapperCSS + css + '\n    </style>\n</head>\n<body>\n    <div class="wrapper">' + html + '\n    </div>\n</body>\n</html>';
+            var isC=config.style==='classic', se=config.gradientTail?(isC?config.tailLength*0.2:config.tailLength*0.15):config.tailLength;
+            var css='', htm='';
+            if(config.orbit) css+='\n        .orbit{position:absolute;inset:0;border-radius:50%;border:'+config.trackWidth+'px solid '+config.color+'18}';
+            css+='\n        .loader{width:'+config.size+'px;height:'+config.size+'px;position:relative;animation:spin '+config.speed+'s linear infinite}\n        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate('+(config.direction*360)+'deg)}}\n        .loader-ring{width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,'+config.color+' 0deg,'+config.color+' '+se+'deg,transparent '+config.tailLength+'deg,transparent 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - '+config.trackWidth+'px),#fff calc(100% - '+config.trackWidth+'px + 1px));mask:radial-gradient(farthest-side,transparent calc(100% - '+config.trackWidth+'px),#fff calc(100% - '+config.trackWidth+'px + 1px))}';
+            if(config.orbit) htm+='\n    <div class="orbit"></div>';
+            htm+='\n    <div class="loader">\n        <div class="loader-ring"></div>';
+            if(isC) { var gc=config.glow?'box-shadow:0 0 10px '+config.color+',0 0 20px '+config.color+';':''; css+='\n        .loader::before{content:\'\';position:absolute;top:0;left:50%;transform:translateX(-50%);width:'+config.trackWidth+'px;height:'+config.trackWidth+'px;background:'+config.color+';border-radius:50%;'+gc+'}'; }
+            htm+='\n    </div>';
+            var wc=config.orbit?'\n        .wrapper{position:relative;width:'+config.size+'px;height:'+config.size+'px;display:flex;align-items:center;justify-content:center}':'';
+            return '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Loading Animation</title>\n    <style>\n        *{margin:0;padding:0;box-sizing:border-box}\n        body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:'+config.exportBg+';}'+wc+css+'\n    </style>\n</head>\n<body>\n    <div class="wrapper">'+htm+'\n    </div>\n</body>\n</html>';
         }
 
-        // ========== 模态框 ==========
-        var activeTab = 'code';
+        function generateGuide() {
+            var h='';
+            if (config.mode==='breathe') {
+                h='<h4>如何使用这段呼吸圆环代码</h4>\n<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>。</p>\n\n<h4>方式一：直接使用</h4>\n<p>复制全部代码，保存为 <code>loading.html</code>。</p>\n\n<h4>方式二：整合到现有项目</h4>\n<p>将 <code>&lt;style&gt;</code> 复制到 CSS 文件，<code>&lt;svg&gt;</code> 复制到 HTML。</p>\n<pre>&lt;svg class="spinner-svg" viewBox="0 0 48 48"&gt;\n  &lt;g class="spinner-group"&gt;\n    &lt;circle class="spinner-circle" cx="24" cy="24" r="18"/&gt;\n  &lt;/g&gt;\n&lt;/svg&gt;</pre>\n\n<h4>方式三：React / Vue</h4>\n<pre>function LoadingSpinner() {\n  return (&lt;svg className="spinner-svg" viewBox="0 0 48 48"&gt;\n    &lt;g className="spinner-group"&gt;\n      &lt;circle className="spinner-circle" cx="24" cy="24" r="18"/&gt;\n    &lt;/g&gt;\n  &lt;/svg&gt;);\n}</pre>\n\n<h4>可调整的参数</h4>\n<ul>\n<li><strong>尺寸</strong>：修改 <code>.spinner-svg</code> 的 <code>width</code> / <code>height</code></li>\n<li><strong>颜色</strong>：修改 <code>stroke</code> 属性</li>\n<li><strong>粗细</strong>：修改 <code>stroke-width</code></li>\n<li><strong>速度</strong>：修改 <code>animation</code> 时长</li>\n<li><strong>最小/最大弧长</strong>：修改 <code>@keyframes arc-linear-breathe</code> 中的 dasharray 值</li>\n<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n</ul>';
+            } else {
+                h='<h4>如何使用这段加载动画代码</h4>\n<p>以下代码是一个<strong>完整独立的 HTML 文件</strong>。</p>\n\n<h4>方式一：直接使用</h4>\n<p>复制全部代码，保存为 <code>loading.html</code>。</p>\n\n<h4>方式二：整合到现有项目</h4>\n<p>将 <code>&lt;style&gt;</code> 复制到 CSS 文件，<code>&lt;body&gt;</code> 内 HTML 放到对应位置。</p>\n<pre>&lt;div class="wrapper"&gt;\n  &lt;div class="loader"&gt;\n    &lt;div class="loader-ring"&gt;&lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;</pre>\n\n<h4>方式三：React / Vue</h4>\n<pre>function LoadingSpinner() {\n  return (&lt;div className="wrapper"&gt;\n    &lt;div className="loader"&gt;\n      &lt;div className="loader-ring"/&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;);\n}</pre>\n\n<h4>可调整的参数</h4>\n<ul>\n<li><strong>尺寸</strong>：修改 <code>.loader</code> 的宽高</li>\n<li><strong>颜色</strong>：修改 <code>conic-gradient</code> 中的色值</li>\n<li><strong>粗细</strong>：修改 <code>mask</code> 中的 <code>calc(100% - Xpx)</code></li>\n<li><strong>速度</strong>：修改 <code>animation</code> 时长</li>\n<li><strong>弧长</strong>：修改 <code>conic-gradient</code> 中的角度</li>\n<li><strong>背景色</strong>：修改 <code>body</code> 的 <code>background</code></li>\n</ul>';
+            }
+            h+='\n<h4>常见问题</h4>\n<ul>\n<li><strong>动画不显示？</strong> 检查 <code>@keyframes</code> 是否被复制。</li>\n<li><strong>尺寸不对？</strong> 确保容器无额外宽高限制。</li>\n<li><strong>颜色不生效？</strong> 经典/简约模式颜色在 CSS 中硬编码，需手动替换。</li>\n</ul>';
+            return h;
+        }
 
+        var activeTab='code';
         function switchTab(tab) {
-            activeTab = tab;
-            document.getElementById('tab-code-btn').classList.toggle('active', tab === 'code');
-            document.getElementById('tab-preview-btn').classList.toggle('active', tab === 'preview');
-            document.getElementById('tab-guide-btn').classList.toggle('active', tab === 'guide');
-            document.getElementById('tab-code-panel').classList.toggle('active', tab === 'code');
-            document.getElementById('tab-preview-panel').classList.toggle('active', tab === 'preview');
-            document.getElementById('tab-guide-panel').classList.toggle('active', tab === 'guide');
-
-            if (tab === 'preview') {
-                var frame = document.getElementById('preview-frame');
-                frame.srcdoc = generateHTML();
-            }
-
-            if (tab === 'guide') {
-                document.getElementById('guide-output').innerHTML = generateGuide();
-            }
-
-            // 根据标签页控制复制按钮的显示
-            var copyBtn = document.getElementById('copy-btn');
-            if (tab === 'guide') {
-                copyBtn.style.display = 'none';
-            } else {
-                copyBtn.style.display = 'flex';
-            }
+            activeTab=tab;
+            document.getElementById('tab-code-btn').classList.toggle('active', tab==='code');
+            document.getElementById('tab-preview-btn').classList.toggle('active', tab==='preview');
+            document.getElementById('tab-guide-btn').classList.toggle('active', tab==='guide');
+            document.getElementById('tab-code-panel').classList.toggle('active', tab==='code');
+            document.getElementById('tab-preview-panel').classList.toggle('active', tab==='preview');
+            document.getElementById('tab-guide-panel').classList.toggle('active', tab==='guide');
+            if (tab==='preview') document.getElementById('preview-frame').srcdoc=generateHTML();
+            if (tab==='guide') document.getElementById('guide-output').innerHTML=generateGuide();
+            document.getElementById('copy-btn').style.display = (tab==='guide')?'none':'flex';
         }
 
-        function openModal() {
-            document.getElementById('code-output').textContent = generateHTML();
-            document.getElementById('modal').classList.add('open');
-            switchTab('code');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('open');
-        }
-
+        function openModal() { document.getElementById('code-output').textContent=generateHTML(); document.getElementById('modal').classList.add('open'); switchTab('code'); }
+        function closeModal() { document.getElementById('modal').classList.remove('open'); }
         async function copyCode() {
-            var code = document.getElementById('code-output').textContent;
-            var btn = document.getElementById('copy-btn');
-            var originalHTML = btn.innerHTML;
-
-            try {
-                await navigator.clipboard.writeText(code);
-                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制';
-                setTimeout(function() { btn.innerHTML = originalHTML; }, 2000);
-            } catch (err) {
-                var textarea = document.createElement('textarea');
-                textarea.value = code;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制';
-                setTimeout(function() { btn.innerHTML = originalHTML; }, 2000);
-            }
+            var code=document.getElementById('code-output').textContent, btn=document.getElementById('copy-btn'), orig=btn.innerHTML;
+            try { await navigator.clipboard.writeText(code); btn.innerHTML='<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制'; setTimeout(function(){btn.innerHTML=orig;},2000); }
+            catch(e) { var ta=document.createElement('textarea'); ta.value=code; ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); btn.innerHTML='<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制'; setTimeout(function(){btn.innerHTML=orig;},2000); }
         }
 
-        function openPresetModal() {
-            document.getElementById('preset-modal').classList.add('open');
-        }
+        function openPresetModal() { document.getElementById('preset-modal').classList.add('open'); }
+        function closePresetModal() { document.getElementById('preset-modal').classList.remove('open'); }
 
-        function closePresetModal() {
-            document.getElementById('preset-modal').classList.remove('open');
-        }
-
-        // ========== 滚动指示器 ==========
         function updateScrollIndicator() {
-            var indicator = document.getElementById('scroll-indicator');
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var scrollHeight = document.documentElement.scrollHeight;
-            var clientHeight = document.documentElement.clientHeight;
-            var isScrollable = scrollHeight > clientHeight + 10;
-            var atBottom = scrollTop + clientHeight >= scrollHeight - 20;
-
-            if (isScrollable && !atBottom) {
-                indicator.classList.add('show');
-            } else {
-                indicator.classList.remove('show');
-            }
+            var ind=document.getElementById('scroll-indicator'), st=window.pageYOffset||document.documentElement.scrollTop, sh=document.documentElement.scrollHeight, ch=document.documentElement.clientHeight;
+            ind.classList.toggle('show', sh>ch+10 && st+ch<sh-20);
         }
 
-        // ========== 滑块防误触 ==========
         function initSliders() {
-            document.querySelectorAll('.slider-container').forEach(function(container) {
-                var slider = container.querySelector('input[type=range]');
-                if (!slider) return;
-
-                slider.addEventListener('touchstart', function() { container.classList.add('active'); }, { passive: false });
-                slider.addEventListener('touchend', function() { container.classList.remove('active'); });
-                slider.addEventListener('mousedown', function() { container.classList.add('active'); });
-                window.addEventListener('mouseup', function() { container.classList.remove('active'); });
+            document.querySelectorAll('.slider-container').forEach(function(c) {
+                var s=c.querySelector('input[type=range]'); if(!s) return;
+                s.addEventListener('touchstart',function(){c.classList.add('active');},{passive:false});
+                s.addEventListener('touchend',function(){c.classList.remove('active');});
+                s.addEventListener('mousedown',function(){c.classList.add('active');});
+                window.addEventListener('mouseup',function(){c.classList.remove('active');});
             });
         }
 
-        // ========== 事件绑定 ==========
         function bindEvents() {
-            document.getElementById('btn-classic').onclick = function() { setStyle('classic'); };
-            document.getElementById('btn-minimal').onclick = function() { setStyle('minimal'); };
-            document.getElementById('orbit-toggle').onclick = toggleOrbit;
-            document.getElementById('gradient-toggle').onclick = toggleGradient;
-            document.getElementById('glow-toggle').onclick = toggleGlow;
-            document.getElementById('btn-cw').onclick = function() { setDirection(1); };
-            document.getElementById('btn-ccw').onclick = function() { setDirection(-1); };
-
-            document.getElementById('speed-control').oninput = function(e) { setSpeed(e.target.value); };
-            document.getElementById('length-control').oninput = function(e) { setLength(e.target.value); };
-            document.getElementById('size-control').oninput = function(e) { setSize(e.target.value); };
-            document.getElementById('width-control').oninput = function(e) { setWidth(e.target.value); };
-
-            document.querySelectorAll('.stepper-btn').forEach(function(btn) {
-                btn.onclick = function(e) {
-                    e.stopPropagation();
-                    var action = btn.getAttribute('data-action');
-                    var delta = parseFloat(btn.getAttribute('data-delta'));
-                    if (action && !isNaN(delta)) handleStepper(action, delta);
-                };
-            });
-
-            document.querySelectorAll('.color-preset').forEach(function(btn) {
-                btn.onclick = function() { setColor(btn.getAttribute('data-color')); };
-            });
-            colorPicker.oninput = function(e) { setColor(e.target.value); };
-
-            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(btn) {
-                btn.onclick = function() {
-                    var bg = btn.getAttribute('data-bg');
-                    var name = btn.getAttribute('data-name');
-                    if (bg && name) setExportBg(bg, name);
-                };
-            });
-            document.getElementById('bg-color-picker').oninput = function(e) { setExportBg(e.target.value, '自定义'); };
-
-            document.getElementById('generate-btn').onclick = openModal;
-            document.getElementById('close-modal-btn').onclick = closeModal;
-            document.getElementById('modal').onclick = function(e) { if (e.target.id === 'modal') closeModal(); };
-            document.getElementById('copy-btn').onclick = copyCode;
-            document.getElementById('tab-code-btn').onclick = function() { switchTab('code'); };
-            document.getElementById('tab-preview-btn').onclick = function() { switchTab('preview'); };
-            document.getElementById('tab-guide-btn').onclick = function() { switchTab('guide'); };
-
-            document.getElementById('preset-btn').onclick = openPresetModal;
-            document.getElementById('close-preset-modal-btn').onclick = closePresetModal;
-            document.getElementById('preset-modal').onclick = function(e) {
-                if (e.target.id === 'preset-modal') closePresetModal();
-            };
-
-            document.querySelectorAll('.preset-load-btn').forEach(function(btn) {
-                btn.onclick = function() {
-                    var presetName = btn.getAttribute('data-preset');
-                    if (presetName) loadPreset(presetName);
-                };
-            });
-
-            window.addEventListener('scroll', updateScrollIndicator);
-            window.addEventListener('resize', updateScrollIndicator);
+            document.getElementById('btn-classic').onclick=function(){setStyle('classic');};
+            document.getElementById('btn-minimal').onclick=function(){setStyle('minimal');};
+            document.getElementById('orbit-toggle').onclick=toggleOrbit;
+            document.getElementById('gradient-toggle').onclick=toggleGradient;
+            document.getElementById('glow-toggle').onclick=toggleGlow;
+            document.getElementById('btn-cw').onclick=function(){setDirection(1);};
+            document.getElementById('btn-ccw').onclick=function(){setDirection(-1);};
+            document.getElementById('speed-control').oninput=function(e){setSpeed(e.target.value);};
+            document.getElementById('length-control').oninput=function(e){setLength(e.target.value);};
+            document.getElementById('size-control').oninput=function(e){setSize(e.target.value);};
+            document.getElementById('width-control').oninput=function(e){setWidth(e.target.value);};
+            document.getElementById('breathe-min-arc-control').oninput=function(e){setBreatheMinArc(e.target.value);};
+            document.getElementById('breathe-max-arc-control').oninput=function(e){setBreatheMaxArc(e.target.value);};
+            document.querySelectorAll('.stepper-btn').forEach(function(b){b.onclick=function(e){e.stopPropagation();var a=b.getAttribute('data-action'),d=parseFloat(b.getAttribute('data-delta'));if(a&&!isNaN(d))handleStepper(a,d);};});
+            document.querySelectorAll('.color-preset').forEach(function(b){b.onclick=function(){setColor(b.getAttribute('data-color'));};});
+            colorPicker.oninput=function(e){setColor(e.target.value);};
+            document.querySelectorAll('#bg-presets .bg-preview').forEach(function(b){b.onclick=function(){var bg=b.getAttribute('data-bg'),n=b.getAttribute('data-name');if(bg&&n)setExportBg(bg,n);};});
+            document.getElementById('bg-color-picker').oninput=function(e){setExportBg(e.target.value,'自定义');};
+            document.getElementById('generate-btn').onclick=openModal;
+            document.getElementById('close-modal-btn').onclick=closeModal;
+            document.getElementById('modal').onclick=function(e){if(e.target.id==='modal')closeModal();};
+            document.getElementById('copy-btn').onclick=copyCode;
+            document.getElementById('tab-code-btn').onclick=function(){switchTab('code');};
+            document.getElementById('tab-preview-btn').onclick=function(){switchTab('preview');};
+            document.getElementById('tab-guide-btn').onclick=function(){switchTab('guide');};
+            document.getElementById('preset-btn').onclick=openPresetModal;
+            document.getElementById('close-preset-modal-btn').onclick=closePresetModal;
+            document.getElementById('preset-modal').onclick=function(e){if(e.target.id==='preset-modal')closePresetModal();};
+            document.querySelectorAll('.preset-load-btn').forEach(function(b){b.onclick=function(){var n=b.getAttribute('data-preset');if(n)loadPreset(n);};});
+            window.addEventListener('scroll',updateScrollIndicator);
+            window.addEventListener('resize',updateScrollIndicator);
         }
 
-        function init() {
-            bindEvents();
-            initSliders();
-            refreshAllUI();
-            updateScrollIndicator();
-        }
-
+        function init() { bindEvents(); initSliders(); refreshAllUI(); updateScrollIndicator(); }
         init();
     </script>
 </body>
